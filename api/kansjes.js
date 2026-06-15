@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
     const { data, error } = await supabase
       .from('kansjes')
-      .select('id, titel, locatie, type, land, oude_prijs, prijs, min_nachten, personen, van, tot, omschrijving, contact, wa, urgency, badges, aangemaakt_op')
+      .select('id, titel, locatie, type, land, oude_prijs, prijs, min_nachten, personen, van, tot, omschrijving, contact, wa, urgency, aangemaakt_op')
       .eq('verified', true)
       .gte('tot', nu) // alleen kansjes die nog niet verlopen zijn
       .order('aangemaakt_op', { ascending: false });
