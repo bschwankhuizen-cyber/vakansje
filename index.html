@@ -1062,6 +1062,7 @@ async function laadKansjesVanApi() {
     if (!resp.ok) throw new Error();
     const data = await resp.json();
     if (data.kansjes && data.kansjes.length > 0) {
+  KANSJES.length = 0; // verwijder demokansjes zodra er echte zijn
       // Voeg API kansjes toe bovenop demo kansjes
       // In productie kun je KANSJES = [] maken en alleen API kansjes tonen
      data.kansjes.forEach(k => {
