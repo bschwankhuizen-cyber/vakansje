@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vakantiekansjes.nl — Last-minute vakantiewoningen van particulieren</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sand: #FAF8FF; --sand2: #F0EDF8;
+  --navy: #25336C; --navy-light: #ECEEF8;
+  --coral: #E73F8C; --coral-dark: #C42A74; --coral-light: #FDEEF6;
+  --sun: #F5A623; --sun-light: #FEF5E4;
+  --teal: #1D9E75; --teal-light: #E4F7F1;
+  --green: #25D366;
+  --gray-100: #EAE8F0; --gray-300: #C4C0D4; --gray-500: #7A768A; --gray-700: #3A3650;
+  --text: #1A1828; --white: #FFFFFF;
+  --radius: 14px; --shadow: 0 4px 24px rgba(37,51,108,0.10);
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--sand); color: var(--text); font-size: 16px; line-height: 1.6; }
+
+/* ── NAV ── */
+nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bottom: 1px solid var(--gray-100); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 62px; position: sticky; top: 0; z-index: 200; }
+.logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--navy); text-decoration: none; }
+.logo span { color: var(--coral); }
+.nav-actions { display: flex; gap: 10px; align-items: center; }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; transition: transform 0.12s, background 0.12s, box-shadow 0.12s; font-family: 'Inter', sans-serif; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--coral); color: var(--white); }
+.btn-primary:hover { background: var(--coral-dark); box-shadow: 0 4px 14px rgba(255,96,64,0.35); }
+.btn-secondary { background: var(--navy); color: var(--white); }
+.btn-secondary:hover { background: #142e4a; }
+.btn-ghost { background: transparent; color: var(--navy); border: 1.5px solid var(--gray-300); }
+.btn-ghost:hover { border-color: var(--navy); background: var(--navy-light); }
+.btn-sun { background: var(--sun); color: var(--white); }
+.btn-sun:hover { background: #d48e1a; }
+.btn-whatsapp { background: var(--green); color: var(--white); }
+.btn-whatsapp:hover { background: #1aae52; box-shadow: 0 4px 14px rgba(37,211,102,0.35); }
+.btn-lg { padding: 14px 28px; font-size: 16px; border-radius: 12px; }
+.btn-full { width: 100%; justify-content: center; padding: 13px; font-size: 15px; border-radius: 10px; }
+
+/* ── HERO ── */
+.hero { background: var(--navy); padding: 5rem 2rem 5.5rem; text-align: center; position: relative; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; background-image: url('https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1400&q=80&auto=format&fit=crop'); background-size: cover; background-position: center; opacity: 0.18; }
+.hero-content { position: relative; z-index: 1; }
+.hero::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 60px; background: var(--sand); clip-path: ellipse(60% 100% at 50% 100%); }
+.hero-eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sun); margin-bottom: 1rem; }
+.hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2.4rem, 5.5vw, 4rem); font-weight: 700; color: var(--white); line-height: 1.1; max-width: 720px; margin: 0 auto 1.2rem; }
+.hero h1 em { font-style: italic; color: #FFD580; font-weight: 300; }
+.hero-sub { font-size: 17px; color: rgba(255,255,255,0.72); max-width: 480px; margin: 0 auto 2.4rem; }
+.hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+/* ── ZOEKBALK ── */
+.zoekbalk-wrap { max-width: 820px; margin: -28px auto 0; padding: 0 1.5rem; position: relative; z-index: 10; }
+.zoekbalk { background: var(--white); border-radius: 16px; box-shadow: 0 8px 32px rgba(27,58,92,0.16); padding: 1.25rem 1.5rem; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
+.zoek-veld label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 5px; }
+.zoek-veld input, .zoek-veld select { width: 100%; border: 1.5px solid var(--gray-100); border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: 'Inter', sans-serif; background: var(--sand); color: var(--text); outline: none; }
+.zoek-veld input:focus, .zoek-veld select:focus { border-color: var(--navy); background: var(--white); }
+.zoek-count { font-size: 13px; color: var(--gray-500); margin-top: 0.75rem; text-align: center; }
+
+/* ── TRUST ── */
+.trust-bar { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; padding: 1.5rem 2rem 0; }
+.trust-item { font-size: 13px; color: var(--gray-500); display: flex; align-items: center; gap: 6px; }
+.trust-check { width: 18px; height: 18px; background: var(--teal-light); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; color: var(--teal); }
+
+/* ── GRID ── */
+.sectie { max-width: 1120px; margin: 0 auto; padding: 3rem 1.5rem; }
+.sectie-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 8px; }
+.sectie-titel { font-family: 'Fraunces', serif; font-size: 1.7rem; font-weight: 700; color: var(--navy); }
+.sectie-sub { font-size: 14px; color: var(--gray-500); }
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.5rem; }
+
+/* ── KAARTJE ── */
+.kaartje { background: var(--white); border-radius: var(--radius); overflow: hidden; transition: transform 0.18s, box-shadow 0.18s; cursor: pointer; border: 1px solid var(--gray-100); }
+.kaartje:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+.kaartje-foto { position: relative; height: 200px; overflow: hidden; }
+.kaartje-foto img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; display: block; }
+.kaartje:hover .kaartje-foto img { transform: scale(1.04); }
+.kaartje-urgency { position: absolute; top: 10px; left: 10px; background: var(--coral); color: var(--white); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+.kaartje-fav { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; }
+.kaartje-fav:hover { transform: scale(1.15); }
+.kaartje-body { padding: 1rem 1.15rem 1.15rem; }
+.kaartje-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; gap: 8px; }
+.kaartje-titel { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: var(--navy); line-height: 1.3; }
+.kaartje-prijs .bedrag { font-size: 19px; font-weight: 700; color: var(--coral); white-space: nowrap; }
+.kaartje-prijs .pn { font-size: 11px; color: var(--gray-500); display: block; text-align: right; }
+.kaartje-locatie { font-size: 13px; color: var(--gray-500); margin-bottom: 10px; }
+.kaartje-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; }
+.badge-teal { background: var(--teal-light); color: #0F6E56; }
+.badge-navy { background: var(--navy-light); color: var(--navy); }
+.badge-sun { background: var(--sun-light); color: #7A4F00; }
+.kaartje-footer { border-top: 1px solid var(--gray-100); padding-top: 9px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.kaartje-data { color: var(--text); font-weight: 500; }
+.kaartje-personen { color: var(--gray-500); }
+.geen-resultaten { text-align: center; padding: 4rem 2rem; color: var(--gray-500); grid-column: 1/-1; }
+.geen-resultaten .icon { font-size: 3rem; display: block; margin-bottom: 1rem; }
+.geen-resultaten h3 { font-family: 'Fraunces', serif; color: var(--navy); margin-bottom: 0.5rem; font-size: 1.3rem; }
+
+/* ── DETAIL MODAL ── */
+.detail-foto { width: 100%; height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 1.25rem; display: block; }
+.detail-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 6px; }
+.detail-titel { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: var(--navy); line-height: 1.25; }
+.detail-prijs { text-align: right; flex-shrink: 0; }
+.detail-prijs .bedrag { font-size: 26px; font-weight: 700; color: var(--coral); }
+.detail-prijs .pn { font-size: 13px; color: var(--gray-500); }
+.detail-locatie { font-size: 14px; color: var(--gray-500); margin-bottom: 12px; }
+.detail-badges { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 14px; }
+.detail-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
+.detail-meta-item { background: var(--sand); border-radius: 10px; padding: 10px 14px; }
+.detail-meta-item .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray-500); margin-bottom: 2px; }
+.detail-meta-item .value { font-size: 15px; font-weight: 600; color: var(--navy); }
+.detail-omschrijving { font-size: 15px; color: var(--gray-700); line-height: 1.65; margin-bottom: 1.5rem; }
+.detail-divider { border: none; border-top: 1px solid var(--gray-100); margin: 1.25rem 0; }
+
+/* ── CONTACT SECTIE ── */
+.contact-sectie { background: var(--sand); border-radius: 14px; padding: 1.25rem; margin-bottom: 0.75rem; }
+.contact-sectie h3 { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 0.2rem; }
+.contact-sectie p { font-size: 13px; color: var(--gray-500); margin-bottom: 1rem; }
+.contact-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+.contact-form { margin-top: 1rem; display: none; }
+.contact-form.open { display: block; }
+
+/* ── ZOEK BANNER ── */
+.zoek-banner { background: linear-gradient(135deg, #1B3A5C 0%, #0D2640 100%); padding: 4rem 2rem; }
+.zoek-banner-inner { max-width: 740px; margin: 0 auto; }
+.zoek-banner h2 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); color: var(--white); margin-bottom: 0.5rem; }
+.zoek-banner h2 em { font-style: italic; color: #FFD580; font-weight: 300; }
+.zoek-banner p { color: rgba(255,255,255,0.65); font-size: 15px; margin-bottom: 1.5rem; }
+.zoekform { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 1.5rem; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.zoekform-veld label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.55); margin-bottom: 5px; display: block; }
+.zoekform-veld input, .zoekform-veld select { width: 100%; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 9px 12px; font-size: 14px; font-family: 'Inter', sans-serif; background: rgba(255,255,255,0.1); color: var(--white); outline: none; }
+.zoekform-veld input::placeholder { color: rgba(255,255,255,0.4); }
+.zoekform-veld input:focus, .zoekform-veld select:focus { border-color: rgba(255,255,255,0.5); }
+.zoekform-veld select option { background: var(--navy); }
+.zoekform-full { grid-column: 1/-1; }
+.zoekform-row2 { grid-column: 1/-1; display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end; }
+.zoek-resultaat { margin-top: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 1rem 1.25rem; font-size: 14px; color: rgba(255,255,255,0.85); display: none; }
+.zoek-resultaat.show { display: block; }
+.zoek-matches { color: var(--sun); font-weight: 600; }
+
+/* ── HOE WERKT HET ── */
+.hwh-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; }
+.stap { background: var(--white); border-radius: var(--radius); padding: 1.5rem; text-align: center; }
+.stap-nr { width: 36px; height: 36px; border-radius: 50%; background: var(--coral-light); color: var(--coral); font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem; }
+.stap h3 { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 5px; }
+.stap p { font-size: 13px; color: var(--gray-500); line-height: 1.5; }
+
+/* ── CTA ── */
+.verhuurder-cta { background: var(--sand2); border-radius: 20px; padding: 3rem 2rem; text-align: center; max-width: 1120px; margin: 0 auto 3rem; }
+.verhuurder-cta h2 { font-family: 'Fraunces', serif; font-size: 2rem; color: var(--navy); margin-bottom: 0.6rem; }
+.verhuurder-cta p { color: var(--gray-500); max-width: 460px; margin: 0 auto 1.75rem; }
+.cta-kenmerken { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
+.cta-kenmerk { font-size: 14px; color: var(--navy); font-weight: 500; display: flex; align-items: center; gap: 7px; }
+
+/* ── FOOTER ── */
+footer { background: var(--navy); color: rgba(255,255,255,0.5); text-align: center; font-size: 13px; padding: 2.5rem 2rem; }
+footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+/* ── MODAL ── */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,18,30,0.6); z-index: 300; align-items: center; justify-content: center; padding: 1rem; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 20px; padding: 2.2rem 2rem; max-width: 580px; width: 100%; max-height: 94vh; overflow-y: auto; position: relative; }
+.modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--gray-100); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; color: var(--gray-700); }
+.modal-close:hover { background: var(--gray-300); }
+.modal h2 { font-family: 'Fraunces', serif; font-size: 1.65rem; font-weight: 700; color: var(--navy); margin-bottom: 0.35rem; }
+.modal-sub { font-size: 14px; color: var(--gray-500); margin-bottom: 1.6rem; }
+.modal-tabs { display: flex; margin-bottom: 1.75rem; border-bottom: 2px solid var(--gray-100); }
+.modal-tab { padding: 10px 18px; font-size: 14px; font-weight: 600; color: var(--gray-500); cursor: pointer; border: none; background: none; font-family: 'Inter', sans-serif; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+.modal-tab.active { color: var(--navy); border-bottom-color: var(--coral); }
+
+/* ── FORM ── */
+.form-section { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin: 1.5rem 0 0.75rem; padding-bottom: 6px; border-bottom: 1px solid var(--gray-100); }
+.fg { margin-bottom: 1rem; }
+.fg label { display: block; font-size: 13px; font-weight: 600; color: var(--gray-700); margin-bottom: 5px; }
+.fg input, .fg select, .fg textarea { width: 100%; padding: 10px 13px; border: 1.5px solid var(--gray-100); border-radius: 8px; font-size: 15px; font-family: 'Inter', sans-serif; background: var(--sand); color: var(--text); outline: none; transition: border-color 0.12s, background 0.12s; }
+.fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--navy); background: var(--white); }
+.fg textarea { resize: vertical; min-height: 80px; }
+.fg-hint { font-size: 12px; color: var(--gray-500); margin-top: 3px; }
+.fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.foto-upload-box { border: 2px dashed var(--gray-300); border-radius: 10px; padding: 1.5rem; text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.foto-upload-box:hover { border-color: var(--navy); background: var(--navy-light); }
+.foto-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.foto-preview img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
+.form-loading { background: var(--coral-light); border-radius: 8px; padding: 11px 14px; font-size: 14px; color: var(--coral-dark); font-weight: 500; margin-bottom: 1rem; display: none; align-items: center; gap: 10px; }
+.form-error { background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; padding: 11px 14px; font-size: 14px; color: #B91C1C; margin-bottom: 1rem; display: none; }
+.form-success { background: var(--teal-light); border: 1px solid var(--teal); border-radius: 8px; padding: 11px 14px; font-size: 14px; color: #0F6E56; margin-bottom: 1rem; display: none; }
+.spinner { width: 15px; height: 15px; border: 2px solid var(--coral-light); border-top-color: var(--coral); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.verif-screen, .bevestig-screen { text-align: center; padding: 0.75rem 0; }
+.screen-icon { font-size: 3.5rem; display: block; margin-bottom: 0.75rem; }
+.verif-screen h2, .bevestig-screen h2 { margin-bottom: 0.6rem; }
+.verif-screen p, .bevestig-screen p { font-size: 15px; color: var(--gray-500); max-width: 360px; margin: 0 auto 1.2rem; }
+.mail-preview { background: var(--sand); border-radius: 10px; padding: 0.9rem 1.1rem; text-align: left; margin: 1rem 0; font-size: 13px; line-height: 1.6; color: var(--gray-700); white-space: pre-wrap; }
+.mail-preview strong { color: var(--navy); display: block; margin-bottom: 3px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* ── WA TOGGLE ── */
+.wa-toggle { display: flex; align-items: center; gap: 10px; padding: 10px 0; cursor: pointer; user-select: none; }
+.wa-toggle input[type=checkbox] { display: none; }
+.wa-switch { width: 40px; height: 22px; background: var(--gray-300); border-radius: 11px; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.wa-switch::after { content: ''; position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: left 0.2s; }
+.wa-toggle input:checked + .wa-switch { background: var(--green); }
+.wa-toggle input:checked + .wa-switch::after { left: 21px; }
+.wa-toggle-label { font-size: 14px; color: var(--gray-700); }
+
+@media (max-width: 680px) {
+  .zoekbalk { grid-template-columns: 1fr 1fr; }
+  .zoekbalk .zoek-btn { grid-column: 1/-1; }
+  .zoekform { grid-template-columns: 1fr; }
+  .zoekform-row2 { grid-template-columns: 1fr 1fr; }
+  .zoekform-row2 .zoek-submit { grid-column: 1/-1; }
+  .fg-row { grid-template-columns: 1fr; }
+  .hero { padding: 3.5rem 1.25rem 4.5rem; }
+  .modal { padding: 1.6rem 1.1rem; }
+  .detail-meta { grid-template-columns: 1fr 1fr; }
+  .contact-btns { flex-direction: column; }
+}
+
+/* ── DATUM WRAPPER (volledig klikbaar) ── */
+.datum-wrap { position: relative; }
+.datum-wrap input[type=date] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; z-index: 2;
+}
+.datum-display {
+  width: 100%; border: 1.5px solid var(--gray-100); border-radius: 8px;
+  padding: 9px 36px 9px 12px; font-size: 14px; font-family: 'Inter',sans-serif;
+  background: var(--sand); color: var(--text); cursor: pointer; user-select: none;
+  transition: border-color 0.12s, background 0.12s;
+  display: flex; align-items: center; gap: 8px; min-height: 40px;
+}
+.datum-display.leeg { color: var(--gray-500); }
+.datum-display::after { content: '📅'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 15px; pointer-events: none; z-index: 1; }
+.datum-wrap:focus-within .datum-display { border-color: var(--navy); background: var(--white); }
+
+/* Modal datum-wrap variant */
+.fg .datum-wrap input[type=date] { border-radius: 8px; }
+.fg .datum-display { border: 1.5px solid var(--gray-100); border-radius: 8px; padding: 10px 36px 10px 13px; font-size: 15px; background: var(--sand); }
+.fg .datum-wrap:focus-within .datum-display { border-color: var(--navy); background: var(--white); }
+
+
+/* ── AANBIEDING PRIJS ── */
+.kaartje-prijs .was { font-size: 12px; color: var(--gray-500); text-decoration: line-through; display: block; text-align: right; }
+.detail-prijs .was { font-size: 14px; color: var(--gray-500); text-decoration: line-through; }
+.detail-prijs .korting { display: inline-block; background: var(--coral); color: white; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-left: 6px; vertical-align: middle; }
+.beschikbaar-toelichting { background: var(--sun-light); border: 1px solid #F5D87A; border-radius: 10px; padding: 10px 14px; font-size: 13px; color: #7A5500; line-height: 1.5; margin-bottom: 1rem; }
+.beschikbaar-toelichting strong { color: #5A3D00; }
+
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo-link" style="display:flex;align-items:center;text-decoration:none;">
+    <svg viewBox="0 0 446 47" height="28" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+      <g><path fill="#25336C" d="M10.634,36.425L0,10.038h7.33l4.969,13.467l1.441,4.498c0.381-1.144,0.621-1.896,0.72-2.262c0.232-0.746,0.48-1.49,0.746-2.236l5.019-13.467h7.181L16.92,36.425H10.634z"/><path fill="#25336C" d="M36.897,18.088l-6.336-1.143c0.712-2.55,1.938-4.439,3.678-5.665c1.739-1.226,4.323-1.838,7.752-1.838c3.114,0,5.433,0.369,6.957,1.105c1.524,0.737,2.597,1.673,3.218,2.808c0.621,1.135,0.932,3.218,0.932,6.249l-0.075,8.15c0,2.319,0.112,4.029,0.335,5.131s0.642,2.282,1.255,3.54h-6.907c-0.183-0.463-0.406-1.15-0.671-2.063c-0.116-0.413-0.199-0.687-0.249-0.819c-1.193,1.159-2.468,2.029-3.826,2.608c-1.359,0.58-2.808,0.87-4.349,0.87c-2.717,0-4.857-0.737-6.423-2.212c-1.565-1.474-2.348-3.337-2.348-5.59c0-1.49,0.356-2.82,1.068-3.988c0.712-1.168,1.71-2.062,2.994-2.683c1.283-0.621,3.134-1.164,5.553-1.627c3.263-0.613,5.524-1.184,6.783-1.714v-0.696c0-1.342-0.332-2.298-0.994-2.87c-0.663-0.572-1.913-0.857-3.752-0.857c-1.242,0-2.211,0.245-2.907,0.733C37.891,16.005,37.328,16.863,36.897,18.088z M46.239,23.753c-0.894,0.298-2.311,0.655-4.249,1.068c-1.938,0.415-3.205,0.82-3.802,1.219c-0.911,0.646-1.366,1.465-1.366,2.459c0,0.978,0.364,1.822,1.093,2.535c0.729,0.712,1.656,1.068,2.783,1.068c1.259,0,2.46-0.414,3.603-1.242c0.845-0.63,1.4-1.4,1.665-2.312c0.182-0.597,0.273-1.73,0.273-3.403V23.753z"/><path fill="#25336C" d="M59.731,36.425V0h6.982v19.331l8.175-9.292h8.597l-9.019,9.641l9.666,16.746h-7.529l-6.634-11.852l-3.255,3.404v8.447H59.731z"/><path fill="#25336C" d="M93.498,18.088l-6.336-1.143c0.712-2.55,1.938-4.439,3.678-5.665c1.739-1.226,4.323-1.838,7.752-1.838c3.114,0,5.433,0.369,6.957,1.105c1.524,0.737,2.597,1.673,3.218,2.808c0.621,1.135,0.932,3.218,0.932,6.249l-0.075,8.15c0,2.319,0.112,4.029,0.335,5.131s0.642,2.282,1.255,3.54h-6.907c-0.183-0.463-0.406-1.15-0.671-2.063c-0.116-0.413-0.199-0.687-0.249-0.819c-1.193,1.159-2.468,2.029-3.826,2.608c-1.359,0.58-2.808,0.87-4.349,0.87c-2.717,0-4.857-0.737-6.423-2.212c-1.565-1.474-2.348-3.337-2.348-5.59c0-1.49,0.356-2.82,1.068-3.988c0.712-1.168,1.71-2.062,2.994-2.683c1.283-0.621,3.134-1.164,5.553-1.627c3.263-0.613,5.524-1.184,6.783-1.714v-0.696c0-1.342-0.332-2.298-0.994-2.87c-0.663-0.572-1.913-0.857-3.752-0.857c-1.242,0-2.211,0.245-2.907,0.733C94.492,16.005,93.929,16.863,93.498,18.088z M102.84,23.753c-0.894,0.298-2.311,0.655-4.249,1.068c-1.938,0.415-3.205,0.82-3.802,1.219c-0.911,0.646-1.366,1.465-1.366,2.459c0,0.978,0.364,1.822,1.093,2.535c0.729,0.712,1.656,1.068,2.783,1.068c1.259,0,2.46-0.414,3.603-1.242c0.845-0.63,1.4-1.4,1.665-2.312c0.182-0.597,0.273-1.73,0.273-3.403V23.753z"/><path fill="#25336C" d="M140.583,36.425h-6.982V22.958c0-2.849-0.149-4.692-0.447-5.528c-0.298-0.836-0.783-1.487-1.454-1.951c-0.67-0.463-1.478-0.696-2.422-0.696c-1.209,0-2.294,0.332-3.255,0.994c-0.961,0.663-1.619,1.541-1.975,2.634c-0.356,1.093-0.535,3.114-0.535,6.062v11.951h-6.982V10.038h6.485v3.876c2.302-2.981,5.201-4.472,8.696-4.472c1.541,0,2.948,0.277,4.224,0.832c1.275,0.555,2.24,1.264,2.895,2.125c0.654,0.861,1.109,1.839,1.366,2.932s0.385,2.659,0.385,4.696V36.425z"/><path fill="#25336C" d="M159.764,10.038v5.565h-4.771v10.635c0,2.153,0.045,3.408,0.137,3.765c0.091,0.355,0.298,0.65,0.621,0.881c0.323,0.232,0.716,0.349,1.18,0.349c0.646,0,1.582-0.224,2.808-0.671l0.596,5.416c-1.624,0.696-3.462,1.044-5.516,1.044c-1.259,0-2.394-0.211-3.404-0.634c-1.011-0.422-1.751-0.969-2.224-1.64s-0.799-1.577-0.981-2.721c-0.149-0.812-0.224-2.451-0.224-4.919V15.604h-3.206v-5.565h3.206V4.795l7.007-4.075v9.317H159.764z"/><path fill="#25336C" d="M164.609,6.46V0h6.982v6.46H164.609z M164.609,36.425V10.038h6.982v26.387H164.609z"/><path fill="#25336C" d="M194.028,28.027l6.957,1.167c-0.895,2.552-2.307,4.494-4.236,5.827s-4.344,2-7.243,2c-4.588,0-7.984-1.499-10.187-4.497c-1.739-2.402-2.609-5.434-2.609-9.094c0-4.373,1.143-7.798,3.429-10.274c2.286-2.476,5.176-3.714,8.671-3.714c3.926,0,7.023,1.296,9.293,3.888c2.269,2.593,3.354,6.564,3.255,11.914h-17.492c0.05,2.071,0.612,3.682,1.689,4.833c1.077,1.151,2.418,1.727,4.025,1.727c1.093,0,2.012-0.298,2.758-0.895C193.084,30.313,193.646,29.353,194.028,28.027z M194.425,20.971c-0.049-2.021-0.571-3.557-1.565-4.609c-0.994-1.051-2.204-1.578-3.628-1.578c-1.524,0-2.783,0.555-3.777,1.665c-0.994,1.11-1.482,2.617-1.466,4.522H194.425z"/></g>
+      <g><path fill="#E73F8C" d="M206.798,36.425V0h6.982v19.331l8.175-9.292h8.597l-9.019,9.641l9.666,16.746h-7.529l-6.634-11.852l-3.255,3.404v8.447H206.798z"/><path fill="#E73F8C" d="M240.565,18.088l-6.336-1.143c0.712-2.55,1.938-4.439,3.678-5.665c1.739-1.226,4.323-1.838,7.752-1.838c3.114,0,5.433,0.369,6.957,1.105c1.524,0.737,2.597,1.673,3.218,2.808c0.621,1.135,0.932,3.218,0.932,6.249l-0.074,8.15c0,2.319,0.111,4.029,0.335,5.131s0.642,2.282,1.255,3.54h-6.907c-0.183-0.463-0.406-1.15-0.671-2.063c-0.116-0.413-0.199-0.687-0.248-0.819c-1.193,1.159-2.469,2.029-3.826,2.608c-1.359,0.58-2.809,0.87-4.35,0.87c-2.717,0-4.857-0.737-6.422-2.212c-1.565-1.474-2.348-3.337-2.348-5.59c0-1.49,0.356-2.82,1.068-3.988c0.712-1.168,1.709-2.062,2.995-2.683c1.283-0.621,3.134-1.164,5.553-1.627c3.263-0.613,5.523-1.184,6.783-1.714v-0.696c0-1.342-0.332-2.298-0.994-2.87c-0.662-0.572-1.913-0.857-3.752-0.857c-1.242,0-2.211,0.245-2.906,0.733C241.559,16.005,240.996,16.863,240.565,18.088z M249.908,23.753c-0.895,0.298-2.311,0.655-4.249,1.068c-1.938,0.415-3.205,0.82-3.802,1.219c-0.911,0.646-1.366,1.465-1.366,2.459c0,0.978,0.364,1.822,1.093,2.535c0.729,0.712,1.656,1.068,2.783,1.068c1.259,0,2.46-0.414,3.603-1.242c0.845-0.63,1.399-1.4,1.665-2.312c0.182-0.597,0.273-1.73,0.273-3.403V23.753z"/><path fill="#E73F8C" d="M287.65,36.425h-6.982V22.958c0-2.849-0.148-4.692-0.447-5.528c-0.298-0.836-0.783-1.487-1.453-1.951c-0.671-0.463-1.479-0.696-2.423-0.696c-1.21,0-2.294,0.332-3.255,0.994s-1.619,1.541-1.975,2.634c-0.357,1.093-0.535,3.114-0.535,6.062v11.951h-6.982V10.038h6.486v3.876c2.302-2.981,5.201-4.472,8.695-4.472c1.541,0,2.949,0.277,4.225,0.832c1.275,0.555,2.24,1.264,2.895,2.125c0.654,0.861,1.109,1.839,1.366,2.932s0.386,2.659,0.386,4.696V36.425z"/><path fill="#E73F8C" d="M292.271,28.897l7.007-1.069c0.298,1.358,0.903,2.39,1.813,3.094c0.911,0.704,2.188,1.056,3.827,1.056c1.806,0,3.163-0.331,4.075-0.994c0.612-0.463,0.919-1.084,0.919-1.863c0-0.529-0.166-0.969-0.497-1.316c-0.348-0.332-1.127-0.638-2.336-0.92c-5.632-1.242-9.201-2.377-10.709-3.404c-2.087-1.424-3.131-3.404-3.131-5.938c0-2.286,0.903-4.208,2.709-5.765c1.805-1.557,4.604-2.335,8.398-2.335c3.61,0,6.294,0.588,8.05,1.764s2.965,2.916,3.628,5.218l-6.584,1.217c-0.282-1.027-0.816-1.814-1.604-2.36c-0.787-0.547-1.909-0.82-3.366-0.82c-1.839,0-3.155,0.257-3.95,0.77c-0.531,0.365-0.796,0.837-0.796,1.417c0,0.497,0.231,0.919,0.696,1.267c0.629,0.464,2.803,1.118,6.521,1.963s6.315,1.88,7.79,3.106c1.457,1.242,2.187,2.973,2.187,5.193c0,2.418-1.011,4.496-3.031,6.236c-2.021,1.738-5.012,2.608-8.97,2.608c-3.595,0-6.44-0.729-8.535-2.187C294.288,33.378,292.917,31.397,292.271,28.897z"/><path fill="#E73F8C" d="M329.865,10.038v25.567c0,3.362-0.221,5.735-0.659,7.118s-1.284,2.464-2.534,3.242c-1.251,0.779-2.845,1.168-4.783,1.168c-0.695,0-1.445-0.062-2.248-0.186c-0.804-0.125-1.669-0.311-2.597-0.56l1.218-5.963c0.331,0.065,0.642,0.12,0.932,0.161c0.289,0.041,0.559,0.063,0.807,0.063c0.713,0,1.297-0.153,1.752-0.46s0.758-0.675,0.907-1.105s0.224-1.724,0.224-3.876v-25.17H329.865z M322.882,6.46V0h6.982v6.46H322.882z"/><path fill="#E73F8C" d="M352.45,28.027l6.957,1.167c-0.895,2.552-2.307,4.494-4.236,5.827s-4.345,2-7.243,2c-4.588,0-7.984-1.499-10.187-4.497c-1.739-2.402-2.608-5.434-2.608-9.094c0-4.373,1.143-7.798,3.428-10.274c2.286-2.476,5.177-3.714,8.672-3.714c3.926,0,7.023,1.296,9.293,3.888c2.27,2.593,3.354,6.564,3.255,11.914h-17.492c0.05,2.071,0.612,3.682,1.689,4.833s2.419,1.727,4.025,1.727c1.093,0,2.013-0.298,2.758-0.895C351.505,30.313,352.068,29.353,352.45,28.027z M352.847,20.971c-0.049-2.021-0.571-3.557-1.564-4.609c-0.994-1.051-2.204-1.578-3.629-1.578c-1.523,0-2.782,0.555-3.776,1.665c-0.993,1.11-1.482,2.617-1.466,4.522H352.847z"/><path fill="#E73F8C" d="M363.009,28.897l7.007-1.069c0.298,1.358,0.903,2.39,1.813,3.094c0.911,0.704,2.188,1.056,3.827,1.056c1.806,0,3.163-0.331,4.075-0.994c0.612-0.463,0.919-1.084,0.919-1.863c0-0.529-0.166-0.969-0.497-1.316c-0.348-0.332-1.127-0.638-2.336-0.92c-5.632-1.242-9.201-2.377-10.709-3.404c-2.087-1.424-3.131-3.404-3.131-5.938c0-2.286,0.903-4.208,2.709-5.765c1.805-1.557,4.604-2.335,8.398-2.335c3.61,0,6.294,0.588,8.05,1.764s2.965,2.916,3.628,5.218l-6.584,1.217c-0.282-1.027-0.816-1.814-1.604-2.36c-0.787-0.547-1.909-0.82-3.366-0.82c-1.839,0-3.155,0.257-3.95,0.77c-0.531,0.365-0.796,0.837-0.796,1.417c0,0.497,0.231,0.919,0.696,1.267c0.629,0.464,2.803,1.118,6.521,1.963s6.315,1.88,7.79,3.106c1.457,1.242,2.187,2.973,2.187,5.193c0,2.418-1.011,4.496-3.031,6.236c-2.021,1.738-5.012,2.608-8.97,2.608c-3.595,0-6.44-0.729-8.535-2.187C365.026,33.378,363.656,31.397,363.009,28.897z"/></g>
+      <g><path fill="#25336C" d="M393.771,36.425v-6.981h6.981v6.981H393.771z"/><path fill="#25336C" d="M431.91,36.425h-6.981V22.958c0-2.849-0.149-4.692-0.447-5.528s-0.782-1.487-1.454-1.951c-0.67-0.463-1.478-0.696-2.422-0.696c-1.209,0-2.295,0.332-3.255,0.994c-0.961,0.663-1.619,1.541-1.976,2.634c-0.355,1.093-0.534,3.114-0.534,6.062v11.951h-6.981V10.038h6.484v3.876c2.303-2.981,5.201-4.472,8.697-4.472c1.54,0,2.947,0.277,4.224,0.832c1.274,0.555,2.239,1.264,2.895,2.125c0.653,0.861,1.109,1.839,1.366,2.932s0.385,2.659,0.385,4.696V36.425z"/><path fill="#25336C" d="M438.992,36.425V0h6.982v36.425H438.992z"/></g>
+    </svg>
+  </a>
+  <div class="nav-actions">
+    <a href="#zoek-kansje" class="btn btn-ghost" style="font-size:13px;padding:8px 14px;">Kansje zoeken</a>
+    <a href="#" class="btn btn-primary" style="font-size:13px;padding:8px 16px;" onclick="openPlaatsenModal(); return false;">+ Kansje plaatsen</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Van particulier tot particulier</p>
+    <h1>Last-minute <em>vakantiekansjes</em><br>van particuliere verhuurders</h1>
+    <p class="hero-sub">Verhuurders plaatsen hun lege weken gratis. Jij boekt direct met de eigenaar.</p>
+    <div class="hero-btns">
+      <a href="#kansjes" class="btn btn-primary btn-lg">Bekijk de kansjes ↓</a>
+      <a href="#" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.3);" onclick="openPlaatsenModal(); return false;">Kansje plaatsen</a>
+    </div>
+  </div>
+</section>
+
+<div class="zoekbalk-wrap">
+  <div class="zoekbalk">
+    <div class="zoek-veld"><label>Aankomst</label>
+      <div class="datum-wrap" onclick="document.getElementById('z-van').showPicker&&document.getElementById('z-van').showPicker()">
+        <input type="date" id="z-van" onchange="filterKansjes();updateDatumDisplay('z-van','z-van-disp')" min="" max="">
+        <div class="datum-display leeg" id="z-van-disp">Kies datum</div>
+      </div>
+    </div>
+    <div class="zoek-veld"><label>Vertrek</label>
+      <div class="datum-wrap" onclick="document.getElementById('z-tot').showPicker&&document.getElementById('z-tot').showPicker()">
+        <input type="date" id="z-tot" onchange="filterKansjes();updateDatumDisplay('z-tot','z-tot-disp')" min="" max="">
+        <div class="datum-display leeg" id="z-tot-disp">Kies datum</div>
+      </div>
+    </div>
+    <div class="zoek-veld"><label>Land</label>
+      <select id="z-land" onchange="filterKansjes()">
+        <option value="">Alle landen</option>
+      </select>
+    </div>
+    <button class="btn btn-primary zoek-btn" onclick="filterKansjes()" style="height:42px;padding:0 18px;font-size:14px;">Zoeken</button>
+  </div>
+  <p class="zoek-count" id="zoek-count"></p>
+</div>
+
+<div class="trust-bar">
+  <div class="trust-item"><span class="trust-check">✓</span> Gratis plaatsen</div>
+  <div class="trust-item"><span class="trust-check">✓</span> Geen account nodig</div>
+  <div class="trust-item"><span class="trust-check">✓</span> Direct contact met eigenaar</div>
+  <div class="trust-item"><span class="trust-check">✓</span> Alleen geverifieerde aanbiedingen</div>
+</div>
+
+<section class="sectie" id="kansjes">
+  <div class="sectie-header">
+    <h2 class="sectie-titel">Actuele kansjes</h2>
+    <span class="sectie-sub" id="resultaat-tekst">12 kansjes gevonden</span>
+  </div>
+  <div class="cards-grid" id="cards-grid"></div>
+</section>
+
+<section class="zoek-banner" id="zoek-kansje">
+  <div class="zoek-banner-inner">
+    <h2>Niet gevonden wat je zocht? <em>Laat het ons weten</em></h2>
+    <p>Laat je zoekopdracht achter en verhuurders met een passend kansje reageren direct op jou.</p>
+    <div class="zoekform">
+      <div class="zoekform-veld"><label>Aankomst</label>
+        <div class="datum-wrap" style="position:relative;" onclick="document.getElementById('sz-van').showPicker&&document.getElementById('sz-van').showPicker()">
+          <input type="date" id="sz-van" onchange="updateDatumDisplay('sz-van','sz-van-disp')" style="border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:white;">
+          <div class="datum-display leeg" id="sz-van-disp" style="border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);">Kies datum</div>
+        </div>
+      </div>
+      <div class="zoekform-veld"><label>Vertrek</label>
+        <div class="datum-wrap" style="position:relative;" onclick="document.getElementById('sz-tot').showPicker&&document.getElementById('sz-tot').showPicker()">
+          <input type="date" id="sz-tot" onchange="updateDatumDisplay('sz-tot','sz-tot-disp')" style="border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:white;">
+          <div class="datum-display leeg" id="sz-tot-disp" style="border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);">Kies datum</div>
+        </div>
+      </div>
+      <div class="zoekform-veld"><label>Land</label>
+        <select id="sz-land">
+          <option value="">Maakt niet uit</option>
+        </select>
+      </div>
+      <div class="zoekform-full zoekform-row2">
+        <div class="zoekform-veld"><label>Jouw naam</label><input type="text" id="sz-naam" placeholder="Jan de Vries"></div>
+        <div class="zoekform-veld"><label>E-mailadres</label><input type="email" id="sz-email" placeholder="jij@voorbeeld.nl"></div>
+        <button class="btn btn-sun zoek-submit" onclick="plaatsZoekopdracht()" style="height:40px;padding:0 18px;font-size:14px;white-space:nowrap;">Opslaan ✓</button>
+      </div>
+    </div>
+    <div class="zoek-resultaat" id="zoek-resultaat"><span id="zoek-matches-tekst"></span></div>
+  </div>
+</section>
+
+<section class="sectie">
+  <h2 class="sectie-titel" style="text-align:center;margin-bottom:2rem;">Zo werkt het</h2>
+  <div class="hwh-grid">
+    <div class="stap"><div class="stap-nr">1</div><h3>Vul het formulier in</h3><p>Beschrijf je woning, voeg foto's toe en stel je prijs in. Klaar in 2 minuten.</p></div>
+    <div class="stap"><div class="stap-nr">2</div><h3>Bevestig via e-mail</h3><p>Eén klik op de verificatielink en je kansje staat live.</p></div>
+    <div class="stap"><div class="stap-nr">3</div><h3>Huurder neemt contact op</h3><p>Via een berichtformulier of WhatsApp — jij kiest hoe je bereikbaar bent.</p></div>
+    <div class="stap"><div class="stap-nr">4</div><h3>Boek direct</h3><p>Geen tussenpersoon, geen commissie. Gewoon afspreken met de huurder.</p></div>
+  </div>
+</section>
+
+<div class="verhuurder-cta">
+  <h2>Lege week? Zet hem online.</h2>
+  <p>Heb jij een vakantiewoning die leegstaat? Plaats gratis een kansje en bereik mensen die nú willen boeken.</p>
+  <div class="cta-kenmerken">
+    <div class="cta-kenmerk">✅ Gratis plaatsen</div>
+    <div class="cta-kenmerk">✅ Geen account nodig</div>
+    <div class="cta-kenmerk">✅ Jij bepaalt de prijs</div>
+    <div class="cta-kenmerk">✅ Direct contact met huurder</div>
+  </div>
+  <a href="#" class="btn btn-primary btn-lg" onclick="openPlaatsenModal(); return false;">Mijn kansje plaatsen →</a>
+</div>
+
+<footer>
+  <div style="margin-bottom:1rem;">
+    <svg viewBox="0 0 446 47" height="24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;filter:brightness(0) invert(1);opacity:0.7;">
+      <g><path fill="#25336C" d="M10.634,36.425L0,10.038h7.33l4.969,13.467l1.441,4.498c0.381-1.144,0.621-1.896,0.72-2.262c0.232-0.746,0.48-1.49,0.746-2.236l5.019-13.467h7.181L16.92,36.425H10.634z"/><path fill="#25336C" d="M36.897,18.088l-6.336-1.143c0.712-2.55,1.938-4.439,3.678-5.665c1.739-1.226,4.323-1.838,7.752-1.838c3.114,0,5.433,0.369,6.957,1.105c1.524,0.737,2.597,1.673,3.218,2.808c0.621,1.135,0.932,3.218,0.932,6.249l-0.075,8.15c0,2.319,0.112,4.029,0.335,5.131s0.642,2.282,1.255,3.54h-6.907c-0.183-0.463-0.406-1.15-0.671-2.063c-0.116-0.413-0.199-0.687-0.249-0.819c-1.193,1.159-2.468,2.029-3.826,2.608c-1.359,0.58-2.808,0.87-4.349,0.87c-2.717,0-4.857-0.737-6.423-2.212c-1.565-1.474-2.348-3.337-2.348-5.59c0-1.49,0.356-2.82,1.068-3.988c0.712-1.168,1.71-2.062,2.994-2.683c1.283-0.621,3.134-1.164,5.553-1.627c3.263-0.613,5.524-1.184,6.783-1.714v-0.696c0-1.342-0.332-2.298-0.994-2.87c-0.663-0.572-1.913-0.857-3.752-0.857c-1.242,0-2.211,0.245-2.907,0.733C37.891,16.005,37.328,16.863,36.897,18.088z M46.239,23.753c-0.894,0.298-2.311,0.655-4.249,1.068c-1.938,0.415-3.205,0.82-3.802,1.219c-0.911,0.646-1.366,1.465-1.366,2.459c0,0.978,0.364,1.822,1.093,2.535c0.729,0.712,1.656,1.068,2.783,1.068c1.259,0,2.46-0.414,3.603-1.242c0.845-0.63,1.4-1.4,1.665-2.312c0.182-0.597,0.273-1.73,0.273-3.403V23.753z"/><path fill="#25336C" d="M59.731,36.425V0h6.982v19.331l8.175-9.292h8.597l-9.019,9.641l9.666,16.746h-7.529l-6.634-11.852l-3.255,3.404v8.447H59.731z"/><path fill="#25336C" d="M93.498,18.088l-6.336-1.143c0.712-2.55,1.938-4.439,3.678-5.665c1.739-1.226,4.323-1.838,7.752-1.838c3.114,0,5.433,0.369,6.957,1.105c1.524,0.737,2.597,1.673,3.218,2.808c0.621,1.135,0.932,3.218,0.932,6.249l-0.075,8.15c0,2.319,0.112,4.029,0.335,5.131s0.642,2.282,1.255,3.54h-6.907c-0.183-0.463-0.406-1.15-0.671-2.063c-0.116-0.413-0.199-0.687-0.249-0.819c-1.193,1.159-2.468,2.029-3.826,2.608c-1.359,0.58-2.808,0.87-4.349,0.87c-2.717,0-4.857-0.737-6.423-2.212c-1.565-1.474-2.348-3.337-2.348-5.59c0-1.49,0.356-2.82,1.068-3.988c0.712-1.168,1.71-2.062,2.994-2.683c1.283-0.621,3.134-1.164,5.553-1.627c3.263-0.613,5.524-1.184,6.783-1.714v-0.696c0-1.342-0.332-2.298-0.994-2.87c-0.663-0.572-1.913-0.857-3.752-0.857c-1.242,0-2.211,0.245-2.907,0.733C94.492,16.005,93.929,16.863,93.498,18.088z M102.84,23.753c-0.894,0.298-2.311,0.655-4.249,1.068c-1.938,0.415-3.205,0.82-3.802,1.219c-0.911,0.646-1.366,1.465-1.366,2.459c0,0.978,0.364,1.822,1.093,2.535c0.729,0.712,1.656,1.068,2.783,1.068c1.259,0,2.46-0.414,3.603-1.242c0.845-0.63,1.4-1.4,1.665-2.312c0.182-0.597,0.273-1.73,0.273-3.403V23.753z"/><path fill="#25336C" d="M140.583,36.425h-6.982V22.958c0-2.849-0.149-4.692-0.447-5.528c-0.298-0.836-0.783-1.487-1.454-1.951c-0.67-0.463-1.478-0.696-2.422-0.696c-1.209,0-2.294,0.332-3.255,0.994c-0.961,0.663-1.619,1.541-1.975,2.634c-0.356,1.093-0.535,3.114-0.535,6.062v11.951h-6.982V10.038h6.485v3.876c2.302-2.981,5.201-4.472,8.696-4.472c1.541,0,2.948,0.277,4.224,0.832c1.275,0.555,2.24,1.264,2.895,2.125c0.654,0.861,1.109,1.839,1.366,2.932s0.385,2.659,0.385,4.696V36.425z"/><path fill="#25336C" d="M159.764,10.038v5.565h-4.771v10.635c0,2.153,0.045,3.408,0.137,3.765c0.091,0.355,0.298,0.65,0.621,0.881c0.323,0.232,0.716,0.349,1.18,0.349c0.646,0,1.582-0.224,2.808-0.671l0.596,5.416c-1.624,0.696-3.462,1.044-5.516,1.044c-1.259,0-2.394-0.211-3.404-0.634c-1.011-0.422-1.751-0.969-2.224-1.64s-0.799-1.577-0.981-2.721c-0.149-0.812-0.224-2.451-0.224-4.919V15.604h-3.206v-5.565h3.206V4.795l7.007-4.075v9.317H159.764z"/><path fill="#25336C" d="M164.609,6.46V0h6.982v6.46H164.609z M164.609,36.425V10.038h6.982v26.387H164.609z"/><path fill="#25336C" d="M194.028,28.027l6.957,1.167c-0.895,2.552-2.307,4.494-4.236,5.827s-4.344,2-7.243,2c-4.588,0-7.984-1.499-10.187-4.497c-1.739-2.402-2.609-5.434-2.609-9.094c0-4.373,1.143-7.798,3.429-10.274c2.286-2.476,5.176-3.714,8.671-3.714c3.926,0,7.023,1.296,9.293,3.888c2.269,2.593,3.354,6.564,3.255,11.914h-17.492c0.05,2.071,0.612,3.682,1.689,4.833c1.077,1.151,2.418,1.727,4.025,1.727c1.093,0,2.012-0.298,2.758-0.895C193.084,30.313,193.646,29.353,194.028,28.027z M194.425,20.971c-0.049-2.021-0.571-3.557-1.565-4.609c-0.994-1.051-2.204-1.578-3.628-1.578c-1.524,0-2.783,0.555-3.777,1.665c-0.994,1.11-1.482,2.617-1.466,4.522H194.425z"/></g>
+      <g><path fill="#E73F8C" d="M206.798,36.425V0h6.982v19.331l8.175-9.292h8.597l-9.019,9.641l9.666,16.746h-7.529l-6.634-11.852l-3.255,3.404v8.447H206.798z"/><path fill="#E73F8C" d="M240.565,18.088l-6.336-1.143c0.712-2.55,1.938-4.439,3.678-5.665c1.739-1.226,4.323-1.838,7.752-1.838c3.114,0,5.433,0.369,6.957,1.105c1.524,0.737,2.597,1.673,3.218,2.808c0.621,1.135,0.932,3.218,0.932,6.249l-0.074,8.15c0,2.319,0.111,4.029,0.335,5.131s0.642,2.282,1.255,3.54h-6.907c-0.183-0.463-0.406-1.15-0.671-2.063c-0.116-0.413-0.199-0.687-0.248-0.819c-1.193,1.159-2.469,2.029-3.826,2.608c-1.359,0.58-2.809,0.87-4.35,0.87c-2.717,0-4.857-0.737-6.422-2.212c-1.565-1.474-2.348-3.337-2.348-5.59c0-1.49,0.356-2.82,1.068-3.988c0.712-1.168,1.709-2.062,2.995-2.683c1.283-0.621,3.134-1.164,5.553-1.627c3.263-0.613,5.523-1.184,6.783-1.714v-0.696c0-1.342-0.332-2.298-0.994-2.87c-0.662-0.572-1.913-0.857-3.752-0.857c-1.242,0-2.211,0.245-2.906,0.733C241.559,16.005,240.996,16.863,240.565,18.088z M249.908,23.753c-0.895,0.298-2.311,0.655-4.249,1.068c-1.938,0.415-3.205,0.82-3.802,1.219c-0.911,0.646-1.366,1.465-1.366,2.459c0,0.978,0.364,1.822,1.093,2.535c0.729,0.712,1.656,1.068,2.783,1.068c1.259,0,2.46-0.414,3.603-1.242c0.845-0.63,1.399-1.4,1.665-2.312c0.182-0.597,0.273-1.73,0.273-3.403V23.753z"/><path fill="#E73F8C" d="M287.65,36.425h-6.982V22.958c0-2.849-0.148-4.692-0.447-5.528c-0.298-0.836-0.783-1.487-1.453-1.951c-0.671-0.463-1.479-0.696-2.423-0.696c-1.21,0-2.294,0.332-3.255,0.994s-1.619,1.541-1.975,2.634c-0.357,1.093-0.535,3.114-0.535,6.062v11.951h-6.982V10.038h6.486v3.876c2.302-2.981,5.201-4.472,8.695-4.472c1.541,0,2.949,0.277,4.225,0.832c1.275,0.555,2.24,1.264,2.895,2.125c0.654,0.861,1.109,1.839,1.366,2.932s0.386,2.659,0.386,4.696V36.425z"/><path fill="#E73F8C" d="M292.271,28.897l7.007-1.069c0.298,1.358,0.903,2.39,1.813,3.094c0.911,0.704,2.188,1.056,3.827,1.056c1.806,0,3.163-0.331,4.075-0.994c0.612-0.463,0.919-1.084,0.919-1.863c0-0.529-0.166-0.969-0.497-1.316c-0.348-0.332-1.127-0.638-2.336-0.92c-5.632-1.242-9.201-2.377-10.709-3.404c-2.087-1.424-3.131-3.404-3.131-5.938c0-2.286,0.903-4.208,2.709-5.765c1.805-1.557,4.604-2.335,8.398-2.335c3.61,0,6.294,0.588,8.05,1.764s2.965,2.916,3.628,5.218l-6.584,1.217c-0.282-1.027-0.816-1.814-1.604-2.36c-0.787-0.547-1.909-0.82-3.366-0.82c-1.839,0-3.155,0.257-3.95,0.77c-0.531,0.365-0.796,0.837-0.796,1.417c0,0.497,0.231,0.919,0.696,1.267c0.629,0.464,2.803,1.118,6.521,1.963s6.315,1.88,7.79,3.106c1.457,1.242,2.187,2.973,2.187,5.193c0,2.418-1.011,4.496-3.031,6.236c-2.021,1.738-5.012,2.608-8.97,2.608c-3.595,0-6.44-0.729-8.535-2.187C294.288,33.378,292.917,31.397,292.271,28.897z"/><path fill="#E73F8C" d="M329.865,10.038v25.567c0,3.362-0.221,5.735-0.659,7.118s-1.284,2.464-2.534,3.242c-1.251,0.779-2.845,1.168-4.783,1.168c-0.695,0-1.445-0.062-2.248-0.186c-0.804-0.125-1.669-0.311-2.597-0.56l1.218-5.963c0.331,0.065,0.642,0.12,0.932,0.161c0.289,0.041,0.559,0.063,0.807,0.063c0.713,0,1.297-0.153,1.752-0.46s0.758-0.675,0.907-1.105s0.224-1.724,0.224-3.876v-25.17H329.865z M322.882,6.46V0h6.982v6.46H322.882z"/><path fill="#E73F8C" d="M352.45,28.027l6.957,1.167c-0.895,2.552-2.307,4.494-4.236,5.827s-4.345,2-7.243,2c-4.588,0-7.984-1.499-10.187-4.497c-1.739-2.402-2.608-5.434-2.608-9.094c0-4.373,1.143-7.798,3.428-10.274c2.286-2.476,5.177-3.714,8.672-3.714c3.926,0,7.023,1.296,9.293,3.888c2.27,2.593,3.354,6.564,3.255,11.914h-17.492c0.05,2.071,0.612,3.682,1.689,4.833s2.419,1.727,4.025,1.727c1.093,0,2.013-0.298,2.758-0.895C351.505,30.313,352.068,29.353,352.45,28.027z M352.847,20.971c-0.049-2.021-0.571-3.557-1.564-4.609c-0.994-1.051-2.204-1.578-3.629-1.578c-1.523,0-2.782,0.555-3.776,1.665c-0.993,1.11-1.482,2.617-1.466,4.522H352.847z"/><path fill="#E73F8C" d="M363.009,28.897l7.007-1.069c0.298,1.358,0.903,2.39,1.813,3.094c0.911,0.704,2.188,1.056,3.827,1.056c1.806,0,3.163-0.331,4.075-0.994c0.612-0.463,0.919-1.084,0.919-1.863c0-0.529-0.166-0.969-0.497-1.316c-0.348-0.332-1.127-0.638-2.336-0.92c-5.632-1.242-9.201-2.377-10.709-3.404c-2.087-1.424-3.131-3.404-3.131-5.938c0-2.286,0.903-4.208,2.709-5.765c1.805-1.557,4.604-2.335,8.398-2.335c3.61,0,6.294,0.588,8.05,1.764s2.965,2.916,3.628,5.218l-6.584,1.217c-0.282-1.027-0.816-1.814-1.604-2.36c-0.787-0.547-1.909-0.82-3.366-0.82c-1.839,0-3.155,0.257-3.95,0.77c-0.531,0.365-0.796,0.837-0.796,1.417c0,0.497,0.231,0.919,0.696,1.267c0.629,0.464,2.803,1.118,6.521,1.963s6.315,1.88,7.79,3.106c1.457,1.242,2.187,2.973,2.187,5.193c0,2.418-1.011,4.496-3.031,6.236c-2.021,1.738-5.012,2.608-8.97,2.608c-3.595,0-6.44-0.729-8.535-2.187C365.026,33.378,363.656,31.397,363.009,28.897z"/></g>
+      <g><path fill="#25336C" d="M393.771,36.425v-6.981h6.981v6.981H393.771z"/><path fill="#25336C" d="M431.91,36.425h-6.981V22.958c0-2.849-0.149-4.692-0.447-5.528s-0.782-1.487-1.454-1.951c-0.67-0.463-1.478-0.696-2.422-0.696c-1.209,0-2.295,0.332-3.255,0.994c-0.961,0.663-1.619,1.541-1.976,2.634c-0.355,1.093-0.534,3.114-0.534,6.062v11.951h-6.981V10.038h6.484v3.876c2.303-2.981,5.201-4.472,8.697-4.472c1.54,0,2.947,0.277,4.224,0.832c1.274,0.555,2.239,1.264,2.895,2.125c0.653,0.861,1.109,1.839,1.366,2.932s0.385,2.659,0.385,4.696V36.425z"/><path fill="#25336C" d="M438.992,36.425V0h6.982v36.425H438.992z"/></g>
+    </svg>
+  </div>
+  <p style="margin-bottom:8px;"><a href="#">Over ons</a> · <a href="#">Spelregels</a> · <a href="#">Privacybeleid</a> · <a href="#">Contact</a></p>
+  <p>© 2025 Vakantiekansjes.nl — Voor en door particulieren</p>
+</footer>
+
+<!-- ═══ DETAIL MODAL ═══ -->
+<div class="modal-overlay" id="detail-overlay" onclick="sluitDetailBuiten(event)">
+  <div class="modal" id="detail-box" style="max-width:640px;">
+    <button class="modal-close" onclick="sluitDetail()">✕</button>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- ═══ PLAATSEN MODAL ═══ -->
+<div class="modal-overlay" id="plaatsen-overlay" onclick="sluitPlaatsenBuiten(event)">
+  <div class="modal" id="plaatsen-box">
+    <button class="modal-close" onclick="sluitPlaatsen()">✕</button>
+
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTab('plaatsen',this)">Kansje plaatsen</button>
+      <button class="modal-tab" onclick="switchTab('zoeken',this)">Kansje zoeken</button>
+    </div>
+
+    <!-- TAB PLAATSEN -->
+    <div id="tab-plaatsen">
+      <div id="stap-form">
+        <div style="background:var(--sun-light);border:1px solid #F5D87A;border-radius:10px;padding:10px 14px;font-size:13px;color:#7A5500;margin-bottom:1.25rem;line-height:1.5;">
+          ⏱️ <strong>Let op:</strong> een kansje is een echte last-minute aanbieding. De beschikbaarheidsdatum mag maximaal <strong>6 weken in de toekomst</strong> liggen.
+        </div>
+        <div class="form-loading" id="form-loading"><div class="spinner"></div>Verificatiemail wordt verstuurd…</div>
+        <div class="form-error" id="form-error"></div>
+
+        <div class="form-section">Over je woning</div>
+        <div class="fg"><label>Naam van het verblijf *</label><input type="text" id="f-titel" placeholder="bijv. Gezellig strandhuis in Zeeland" maxlength="80"></div>
+        <div class="fg-row">
+          <div class="fg"><label>Type woning *</label>
+            <select id="f-type"><option value="">Kies…</option><option>Vakantiewoning</option><option>Chalet</option><option>Appartement</option><option>Tiny house</option><option>Boerderij</option><option>Glamping / tent</option><option>Woonboot</option><option>Anders</option></select>
+          </div>
+          <div class="fg"><label>Land *</label>
+            <select id="f-land"><option value="">Kies land…</option></select>
+          </div>
+        </div>
+        <div class="fg"><label>Locatie *</label><input type="text" id="f-locatie" placeholder="bijv. Domburg, Zeeland"></div>
+        <div class="fg-row">
+          <div class="fg"><label>Max. personen *</label><input type="number" id="f-personen" min="1" max="50" placeholder="4"></div>
+          <div class="fg"><label>Min. aantal nachten *</label><input type="number" id="f-minnachten" min="1" max="30" placeholder="2"></div>
+        </div>
+        <div class="fg-row">
+          <div class="fg">
+            <label>Normale prijs p/n (€) *</label>
+            <input type="number" id="f-oudprijs" min="1" placeholder="120">
+            <p class="fg-hint">De prijs die je normaal vraagt</p>
+          </div>
+          <div class="fg">
+            <label>Aanbiedingsprijs p/n (€) *</label>
+            <input type="number" id="f-prijs" min="1" placeholder="85">
+            <p class="fg-hint">Jouw last-minute prijs</p>
+          </div>
+        </div>
+        <div id="korting-preview" style="display:none;background:var(--teal-light);border-radius:8px;padding:8px 12px;font-size:13px;color:#0F6E56;font-weight:600;margin-bottom:0.5rem;"></div>
+        <div class="fg"><label>Omschrijving</label><textarea id="f-omschrijving" placeholder="Wat maakt jouw plek bijzonder?"></textarea></div>
+
+        <div class="form-section">Foto's</div>
+        <div class="fg">
+          <div class="foto-upload-box" onclick="document.getElementById('foto-input').click()">
+            <div style="font-size:2rem;margin-bottom:6px;">📷</div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);">Klik om foto's toe te voegen</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:3px;">Max. 5 foto's · JPG of PNG</div>
+          </div>
+          <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="previewFotos(this)">
+          <div class="foto-preview" id="foto-preview"></div>
+          <p class="fg-hint">Tip: een mooie foto zorgt voor 3× meer reacties</p>
+        </div>
+
+        <div class="form-section">Beschikbaarheid</div>
+        <div class="fg-row">
+          <div class="fg"><label>Beschikbaar vanaf *</label>
+            <div class="datum-wrap" onclick="document.getElementById('f-van').showPicker&&document.getElementById('f-van').showPicker()">
+              <input type="date" id="f-van" onchange="updateDatumDisplay('f-van','f-van-disp')">
+              <div class="datum-display leeg" id="f-van-disp">Kies datum</div>
+            </div>
+          </div>
+          <div class="fg"><label>Beschikbaar tot *</label>
+            <div class="datum-wrap" onclick="document.getElementById('f-tot').showPicker&&document.getElementById('f-tot').showPicker()">
+              <input type="date" id="f-tot" onchange="updateDatumDisplay('f-tot','f-tot-disp')">
+              <div class="datum-display leeg" id="f-tot-disp">Kies datum</div>
+            </div>
+          </div>
+        </div>
+        <p class="fg-hint" style="margin-bottom:1rem;">Maximaal 6 weken in de toekomst.</p>
+
+        <div class="form-section">Hoe kunnen huurders contact opnemen?</div>
+        <div class="fg"><label>Jouw naam *</label><input type="text" id="f-naam" placeholder="Jan de Vries"></div>
+        <div class="fg"><label>E-mailadres (voor verificatie, niet zichtbaar) *</label><input type="email" id="f-email" placeholder="jij@voorbeeld.nl"></div>
+
+        <!-- WhatsApp toggle -->
+        <div class="fg" style="background:var(--sand);border-radius:10px;padding:14px;">
+          <label class="wa-toggle" onclick="toggleWA()">
+            <input type="checkbox" id="f-wa-enabled">
+            <span class="wa-switch"></span>
+            <span class="wa-toggle-label">WhatsApp-knop tonen op mijn kansje</span>
+          </label>
+          <div id="wa-nr-wrap" style="display:none;margin-top:10px;">
+            <input type="tel" id="f-wa-nr" placeholder="bijv. 0612345678" style="width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:var(--white);outline:none;">
+            <p class="fg-hint">Huurders kunnen je dan direct via WhatsApp bereiken.</p>
+          </div>
+        </div>
+
+        <div class="fg" style="margin-top:0.75rem;"><label>Of: contactgegevens die zichtbaar zijn op het kansje</label><input type="text" id="f-contact" placeholder="bijv. info@mijnhuis.nl of 06-12345678"><p class="fg-hint">Laat leeg als je alleen WhatsApp wilt gebruiken.</p></div>
+
+        <button class="btn btn-primary btn-full" id="btn-verstuur" onclick="plaatsKansje()" style="margin-top:0.5rem;">Verificatiemail versturen →</button>
+      </div>
+
+      <div id="stap-verif" style="display:none">
+        <div class="verif-screen">
+          <span class="screen-icon">📬</span>
+          <h2>Check je e-mail</h2>
+          <p>We stuurden een verificatielink naar:</p>
+          <div class="mail-preview"><strong>Inhoud verificatiemail:</strong><span id="verif-mail-preview"></span></div>
+          <p style="font-size:13px;color:var(--gray-500);">Geen mail? Check de spam of</p>
+          <button class="btn btn-ghost" style="margin-top:8px;font-size:13px;" onclick="herplaatsMail()" id="btn-opnieuw">Verstuur opnieuw</button><br>
+          <button class="btn btn-ghost" style="margin-top:10px;font-size:12px;color:var(--gray-500);border-color:var(--gray-100);" onclick="simuleerVerificatie()">🔗 Simuleer: klik op verificatielink</button>
+        </div>
+      </div>
+
+      <div id="stap-klaar" style="display:none">
+        <div class="bevestig-screen">
+          <span class="screen-icon">🎉</span>
+          <h2>Je kansje staat live!</h2>
+          <p>Geweldig — jouw woning is nu zichtbaar voor zoekers op Vakantiekansjes.nl.</p>
+          <button class="btn btn-primary btn-lg" onclick="sluitEnToonNieuw()">Bekijk het overzicht</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB ZOEKEN -->
+    <div id="tab-zoeken" style="display:none">
+      <p style="font-size:15px;color:var(--gray-700);margin-bottom:1.5rem;line-height:1.6;">Laat hier je zoekopdracht achter. Verhuurders die een passend kansje hebben nemen contact op.</p>
+      <div class="form-error" id="zoek-error"></div>
+      <div class="form-section">Wanneer wil je op vakantie?</div>
+      <div class="fg-row">
+        <div class="fg"><label>Aankomst *</label>
+          <div class="datum-wrap" onclick="document.getElementById('sz2-van').showPicker&&document.getElementById('sz2-van').showPicker()">
+            <input type="date" id="sz2-van" onchange="updateDatumDisplay('sz2-van','sz2-van-disp')">
+            <div class="datum-display leeg" id="sz2-van-disp">Kies datum</div>
+          </div>
+        </div>
+        <div class="fg"><label>Vertrek *</label>
+          <div class="datum-wrap" onclick="document.getElementById('sz2-tot').showPicker&&document.getElementById('sz2-tot').showPicker()">
+            <input type="date" id="sz2-tot" onchange="updateDatumDisplay('sz2-tot','sz2-tot-disp')">
+            <div class="datum-display leeg" id="sz2-tot-disp">Kies datum</div>
+          </div>
+        </div>
+      </div>
+      <div class="fg-row">
+        <div class="fg"><label>Land</label>
+          <select id="sz2-land"><option value="">Maakt niet uit</option></select>
+        </div>
+        <div class="fg"><label>Max. budget p/n (€)</label><input type="number" id="sz2-budget" placeholder="150"></div>
+      </div>
+      <div class="fg"><label>Aantal personen</label><input type="number" id="sz2-personen" min="1" placeholder="4"></div>
+      <div class="form-section">Jouw gegevens</div>
+      <div class="fg-row">
+        <div class="fg"><label>Naam *</label><input type="text" id="sz2-naam" placeholder="Jan de Vries"></div>
+        <div class="fg"><label>E-mailadres *</label><input type="email" id="sz2-email" placeholder="jij@voorbeeld.nl"></div>
+      </div>
+      <div class="fg"><label>Bijzonderheden</label><textarea id="sz2-opmerking" placeholder="bijv. hond mee, zwembad gewenst…" style="min-height:60px;"></textarea></div>
+      <button class="btn btn-sun btn-full" id="btn-zoek-verstuur" onclick="plaatsZoekopdracht2()">Zoekopdracht plaatsen ✓</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+const EU_LANDEN = [
+  'Nederland','België','Duitsland','Frankrijk','Spanje','Portugal','Italië',
+  'Oostenrijk','Zwitserland','Griekenland','Kroatië','Slovenië','Tsjechië',
+  'Polen','Hongarije','Denemarken','Noorwegen','Zweden','Finland','IJsland',
+  'Ierland','Schotland','Engeland','Wales','Luxemburg','Malta','Cyprus',
+  'Bulgarije','Roemenië','Albanië','Montenegro','Servië','Noord-Macedonië',
+  'Bosnië-Herzegovina','Slowakije','Letland','Litouwen','Estland','Moldavië',
+];
+
+// ═══ DATA ═══
+const UNSPLASH = [
+  'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=75&auto=format&fit=crop',
+  'https://images.unsplash.com/photo-1421789665209-c9b2a435e3dc?w=700&q=75&auto=format&fit=crop',
+];
+
+function addD(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r;}
+function fmt(d){return d.toISOString().split('T')[0];}
+function fmtNL(s){if(!s)return'';const d=new Date(s);const m=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];return`${d.getDate()} ${m[d.getMonth()]}`;}
+
+const nu = new Date();
+const KANSJES = [
+  {id:1,titel:"Knusse boerderij aan de Vecht",locatie:"Ommen, Overijssel",type:"Boerderij",land:"Nederland",oudePrijs:130,prijs:95,minNachten:3,personen:6,van:fmt(addD(nu,2)),tot:fmt(addD(nu,7)),urgency:"Nog 5 dagen!",badges:["Hond welkom","Tuin"],omschrijving:"Idyllische boerderij midden in de natuur met uitzicht over de rivier de Vecht. Ideaal voor een gezin of vriendengroep. Grote tuin met terras, barbecue en vuurkorf. Dieren op het erf.",contact:"jan@boerderijaandevecht.nl",wa:"31612345601"},
+  {id:2,titel:"Strandhuis op Vlieland",locatie:"Vlieland, Friesland",type:"Vakantiewoning",land:"Nederland",oudePrijs:230,prijs:175,minNachten:5,personen:8,van:fmt(addD(nu,6)),tot:fmt(addD(nu,13)),urgency:"Populair!",badges:["Strand","Terras"],omschrijving:"Direct aan de duinen, op 5 minuten lopen van het strand. Ruim huis met grote woonkamer, terras en 4 slaapkamers. Auto's niet toegestaan op Vlieland — heerlijk rustig!",contact:"vlieland@vakantie.nl",wa:"31612345602"},
+  {id:3,titel:"Tiny house in de Veluwe",locatie:"Hoenderloo, Gelderland",type:"Tiny house",land:"Nederland",oudePrijs:110,prijs:75,minNachten:2,personen:2,van:fmt(addD(nu,3)),tot:fmt(addD(nu,8)),urgency:"Bijna weg!",badges:["Romantisch","Bubbelbad"],omschrijving:"Sfeervol tiny house midden in het bos. Perfect voor een romantisch weekendje weg. Bubbelbad op het terras, houtkachel binnen. Herten lopen soms langs het raam.",contact:"",wa:"31612345603"},
+  {id:4,titel:"Appartement Rotterdam centrum",locatie:"Rotterdam, Zuid-Holland",type:"Appartement",land:"Nederland",oudePrijs:120,prijs:89,minNachten:2,personen:4,van:fmt(addD(nu,1)),tot:fmt(addD(nu,4)),urgency:"Morgen al!",badges:["Centrum","OV nabij"],omschrijving:"Modern appartement op de 8e verdieping met uitzicht over de Maas. Alles op loopafstand: markthal, kunsthal, Blaak. Perfecte uitvalsbasis voor een stedentrip.",contact:"rotterdam@appartement.nl",wa:""},
+  {id:5,titel:"Toscaanse villa met zwembad",locatie:"Siena, Toscane (Italië)",type:"Villa",land:"Italië",oudePrijs:480,prijs:320,minNachten:7,personen:10,van:fmt(addD(nu,14)),tot:fmt(addD(nu,21)),urgency:"Droomweek!",badges:["Zwembad","Toscane"],omschrijving:"Authentieke Toscaanse villa met privézwembad en panoramisch uitzicht over de heuvels. 5 slaapkamers, professionele keuken, grote tuin met olijfbomen en wijnranken.",contact:"info@tuscanvilla.it",wa:"39612345605"},
+  {id:6,titel:"Zeeuws huisje op loopafstand strand",locatie:"Cadzand, Zeeland",type:"Vakantiewoning",land:"Nederland",oudePrijs:155,prijs:115,minNachten:3,personen:5,van:fmt(addD(nu,8)),tot:fmt(addD(nu,15)),urgency:"Zomertip!",badges:["Strand","Fietsen"],omschrijving:"Typisch Zeeuws huisje met rieten dak, op 200 meter van het strand. Fietsen aanwezig. Gezellige dorpskern op wandelafstand. Ideaal voor een ontspannen strandvakantie.",contact:"zeeuw@kusthuisje.nl",wa:"31612345606"},
+  {id:7,titel:"Chalet Ardennen met open haard",locatie:"Durbuy, België",type:"Chalet",land:"België",oudePrijs:190,prijs:140,minNachten:3,personen:7,van:fmt(addD(nu,4)),tot:fmt(addD(nu,8)),urgency:"4 nachten!",badges:["Open haard","Sauna"],omschrijving:"Gezellig houten chalet in het hart van de Ardennen. Open haard, sauna en groot terras. Ideaal voor wandelen, fietsen en kajakken op de Ourthe.",contact:"ardennen@chalet.be",wa:"32612345607"},
+  {id:8,titel:"Woonboot in Amsterdam",locatie:"Amsterdam, Noord-Holland",type:"Woonboot",land:"Nederland",oudePrijs:260,prijs:195,minNachten:2,personen:3,van:fmt(addD(nu,2)),tot:fmt(addD(nu,5)),urgency:"Bijzonder!",badges:["Woonboot","Uniek"],omschrijving:"Unieke woonboot in de Jordaan, een van de meest geliefde wijken van Amsterdam. Volledig ingericht, zonnedek boven. Het gevoel wonen in Amsterdam is echt anders vanaf het water.",contact:"",wa:"31612345608"},
+  {id:9,titel:"Glamping in de Achterhoek",locatie:"Winterswijk, Gelderland",type:"Glamping",land:"Nederland",oudePrijs:95,prijs:65,minNachten:2,personen:2,van:fmt(addD(nu,9)),tot:fmt(addD(nu,12)),urgency:"Weekend!",badges:["Glamping","Sterren kijken"],omschrijving:"Luxe safaritent op een rustig stuk Achterhoeks land. Eigen badkamer, comfortabel bed en een buitendouche. Ideaal voor sterrenkijken — minimale lichtvervuiling.",contact:"glamping@achterhoek.nl",wa:"31612345609"},
+  {id:10,titel:"Stadsappartement Den Haag",locatie:"Den Haag, Zuid-Holland",type:"Appartement",land:"Nederland",oudePrijs:110,prijs:79,minNachten:2,personen:2,van:fmt(addD(nu,0)),tot:fmt(addD(nu,3)),urgency:"Nu!",badges:["Centrum","Strand nabij"],omschrijving:"Sfeervol appartement in het Zeeheldenkwartier. Op de fiets naar Scheveningen, Madurodam of het centrum. Perfect voor een stedentrip of dagjes uit aan zee.",contact:"denhaag@appartement.nl",wa:""},
+  {id:11,titel:"Finca op Mallorca",locatie:"Pollença, Mallorca (Spanje)",type:"Finca",land:"Spanje",oudePrijs:420,prijs:280,minNachten:7,personen:8,van:fmt(addD(nu,18)),tot:fmt(addD(nu,25)),urgency:"Aanbieding!",badges:["Zwembad","Olijfgaarden"],omschrijving:"Prachtige finca in het noorden van Mallorca, omgeven door olijfgaarden. Privézwembad, buitenkeuken en terras met uitzicht op de Tramuntana. Zeven heerlijke nachten.",contact:"mallorca@finca.es",wa:"34612345611"},
+  {id:12,titel:"Boshuisje op de Veluwe",locatie:"Nunspeet, Gelderland",type:"Vakantiewoning",land:"Nederland",oudePrijs:120,prijs:88,minNachten:3,personen:4,van:fmt(addD(nu,6)),tot:fmt(addD(nu,11)),urgency:"5 nachten",badges:["Bos","Fietsen"],omschrijving:"Lekker rustig boshuisje, midden in de bossen bij Nunspeet. Eigen tuin met hangmat en vuurschaal. Fietspaden direct vanuit de deur. Heerlijk voor een gezin.",contact:"nunspeet@boshuisje.nl",wa:"31612345612"},
+];
+
+let extraKaartjes = [];
+let pendingKaartje = null;
+let contactFormBezig = false;
+
+function alleKansjes(){ return [...extraKaartjes,...KANSJES]; }
+
+function heeftOverlap(k,van,tot){
+  if(!van&&!tot)return true;
+  const kv=new Date(k.van),kt=new Date(k.tot);
+  const zv=van?new Date(van):null,zt=tot?new Date(tot):null;
+  if(zv&&zt)return kv<=zt&&kt>=zv;
+  if(zv)return kt>=zv;
+  if(zt)return kv<=zt;
+  return true;
+}
+
+function filterKansjes(){
+  const van=document.getElementById('z-van').value;
+  const tot=document.getElementById('z-tot').value;
+  const land=document.getElementById('z-land').value;
+  const lijst=alleKansjes().filter(k=>heeftOverlap(k,van,tot)&&(!land||k.land===land));
+  renderGrid(lijst);
+  const countEl=document.getElementById('zoek-count');
+  const resEl=document.getElementById('resultaat-tekst');
+  if(van||tot||land){countEl.innerHTML=`<strong>${lijst.length} kansje${lijst.length!==1?'s':''}</strong> gevonden voor jouw zoekopdracht`;}else{countEl.innerHTML='';}
+  resEl.textContent=`${lijst.length} kansjes gevonden`;
+}
+
+function renderGrid(lijst){
+  const grid=document.getElementById('cards-grid');
+  if(!lijst.length){
+    grid.innerHTML=`<div class="geen-resultaten"><span class="icon">🔍</span><h3>Geen kansjes gevonden</h3><p>Probeer een andere periode — of laat een <a href="#zoek-kansje" style="color:var(--navy);font-weight:600;">zoekopdracht</a> achter.</p></div>`;
+    return;
+  }
+  grid.innerHTML=lijst.map(k=>`
+    <article class="kaartje" onclick="openDetail(${k.id||k._tid})">
+      <div class="kaartje-foto">
+        <img src="${k.foto||UNSPLASH[(k.id||k._tid)%UNSPLASH.length]}" alt="${k.titel}" loading="lazy">
+        <span class="kaartje-urgency">${k.urgency}</span>
+        <button class="kaartje-fav" onclick="event.stopPropagation();toggleFav(this)" title="Bewaar">🤍</button>
+      </div>
+      <div class="kaartje-body">
+        <div class="kaartje-header">
+          <div class="kaartje-titel">${k.titel}</div>
+          <div class="kaartje-prijs">
+            ${k.oudePrijs?`<span class="was">€${k.oudePrijs}</span>`:''}
+            <span class="bedrag">€${k.prijs}</span><span class="pn">/ nacht</span>
+          </div>
+        </div>
+        <div class="kaartje-locatie">📍 ${k.locatie}</div>
+        <div class="kaartje-badges">${k.badges.map(b=>`<span class="badge badge-teal">${b}</span>`).join('')}<span class="badge badge-navy">${k.type}</span></div>
+        <div class="kaartje-footer">
+          <span class="kaartje-data">${fmtNL(k.van)} → ${fmtNL(k.tot)}</span>
+          <span class="kaartje-personen">👤 max. ${k.personen}${k.minNachten?` · min. ${k.minNachten}n`:''}</span>
+        </div>
+      </div>
+    </article>`).join('');
+}
+
+function toggleFav(btn){btn.textContent=btn.textContent==='🤍'?'❤️':'🤍';}
+
+// ═══ DETAIL ═══
+function openDetail(id){
+  const k=alleKansjes().find(x=>(x.id||x._tid)===id);
+  if(!k)return;
+  const foto=k.foto||UNSPLASH[(k.id||k._tid)%UNSPLASH.length];
+  const heeftWA=!!k.wa;
+  const heeftContact=!!k.contact;
+
+  document.getElementById('detail-content').innerHTML=`
+    <img src="${foto}" alt="${k.titel}" class="detail-foto">
+    <div class="detail-header">
+      <div class="detail-titel">${k.titel}</div>
+      <div class="detail-prijs">
+        ${k.oudePrijs?`<span class="was">€${k.oudePrijs} p/n</span><span class="korting">-${Math.round((1-k.prijs/k.oudePrijs)*100)}%</span><br>`:''}
+        <span class="bedrag">€${k.prijs}</span> <span class="pn">per nacht</span>
+      </div>
+    </div>
+    <div class="detail-locatie">📍 ${k.locatie}</div>
+    <div class="detail-badges">
+      ${k.badges.map(b=>`<span class="badge badge-teal">${b}</span>`).join('')}
+      <span class="badge badge-navy">${k.type}</span>
+      <span class="badge badge-sun">${k.urgency}</span>
+    </div>
+    <div class="beschikbaar-toelichting">
+      📅 <strong>Beschikbaar van ${fmtNL(k.van)} t/m ${fmtNL(k.tot)}</strong> — je hoeft niet per se deze exacte periode te boeken. Kies zelf je aankomst- en vertrekdatum binnen dit venster, met een minimum van ${k.minNachten||1} nacht${(k.minNachten||1)!==1?'en':''}.
+    </div>
+    <div class="detail-meta">
+      <div class="detail-meta-item"><div class="label">Beschikbaar vanaf</div><div class="value">${fmtNL(k.van)}</div></div>
+      <div class="detail-meta-item"><div class="label">Beschikbaar t/m</div><div class="value">${fmtNL(k.tot)}</div></div>
+      <div class="detail-meta-item"><div class="label">Max. personen</div><div class="value">${k.personen} personen</div></div>
+      <div class="detail-meta-item"><div class="label">Minimaal</div><div class="value">${k.minNachten||1} nacht${(k.minNachten||1)!==1?'en':''}</div></div>
+    </div>
+    ${k.omschrijving?`<div class="detail-omschrijving">${k.omschrijving}</div>`:''}
+    <hr class="detail-divider">
+
+    <div class="contact-sectie">
+      <h3>Contact opnemen met de verhuurder</h3>
+      <p>Stel een vraag of geef aan dat je wilt boeken — de verhuurder reageert snel.</p>
+      <div class="contact-btns">
+        <button class="btn btn-secondary" onclick="toggleContactForm(${k.id||k._tid})" id="btn-form-${k.id||k._tid}">
+          ✉️ Stuur een bericht
+        </button>
+        ${heeftWA?`<a class="btn btn-whatsapp" href="https://wa.me/${k.wa}?text=${encodeURIComponent('Hoi! Ik zag jullie kansje "'+k.titel+'" op Vakantiekansjes.nl en heb interesse. Kunnen we even contact?')}" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          WhatsApp
+        </a>`:''}
+        ${heeftContact&&!heeftWA?`<div style="font-size:13px;color:var(--gray-500);padding:8px 0;">📞 ${k.contact}</div>`:''}
+      </div>
+
+      <div class="contact-form" id="contact-form-${k.id||k._tid}">
+        <div class="form-error" id="cf-error-${k.id||k._tid}" style="margin-top:1rem;"></div>
+        <div class="form-success" id="cf-success-${k.id||k._tid}" style="margin-top:1rem;"></div>
+        <div style="margin-top:1rem;">
+          <div class="fg-row" style="margin-bottom:10px;">
+            <div class="fg" style="margin-bottom:0;"><label>Jouw naam *</label><input type="text" id="cf-naam-${k.id||k._tid}" placeholder="Jan de Vries"></div>
+            <div class="fg" style="margin-bottom:0;"><label>E-mailadres *</label><input type="email" id="cf-email-${k.id||k._tid}" placeholder="jij@voorbeeld.nl"></div>
+          </div>
+          <div class="fg" style="margin-bottom:10px;">
+            <label>Jouw bericht *</label>
+            <textarea id="cf-bericht-${k.id||k._tid}" placeholder="bijv. Ik heb interesse in jullie kansje voor de periode ${fmtNL(k.van)}–${fmtNL(k.tot)}. Hebben jullie ook kinderbedjes?" style="min-height:90px;width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:var(--sand);outline:none;resize:vertical;"></textarea>
+          </div>
+          <button class="btn btn-secondary" id="cf-btn-${k.id||k._tid}" onclick="verstuurBericht(${k.id||k._tid},'${k.contact||''}','${k.titel.replace(/'/g,"\\'")}','${k.locatie}')" style="font-size:14px;padding:10px 20px;">Bericht versturen →</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('detail-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function toggleContactForm(id){
+  const form=document.getElementById(`contact-form-${id}`);
+  const btn=document.getElementById(`btn-form-${id}`);
+  const open=form.classList.toggle('open');
+  btn.textContent=open?'✕ Verberg formulier':'✉️ Stuur een bericht';
+}
+
+async function verstuurBericht(id, contactEmail, titel, locatie){
+  if(contactFormBezig)return;
+  const naam=document.getElementById(`cf-naam-${id}`).value.trim();
+  const email=document.getElementById(`cf-email-${id}`).value.trim();
+  const bericht=document.getElementById(`cf-bericht-${id}`).value.trim();
+  const errEl=document.getElementById(`cf-error-${id}`);
+  const succEl=document.getElementById(`cf-success-${id}`);
+  errEl.style.display='none'; succEl.style.display='none';
+
+  if(!naam){errEl.textContent='Vul je naam in.';errEl.style.display='block';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Vul een geldig e-mailadres in.';errEl.style.display='block';return;}
+  if(!bericht){errEl.textContent='Schrijf een berichtje.';errEl.style.display='block';return;}
+
+  contactFormBezig=true;
+  const btn=document.getElementById(`cf-btn-${id}`);
+  btn.textContent='⏳ Versturen…'; btn.disabled=true;
+
+  try {
+    const prompt=`Schrijf een korte, vriendelijke Nederlandse doorstuur-e-mail (plain tekst) namens Vakantiekansjes.nl.
+
+Een geïnteresseerde huurder heeft een bericht gestuurd via het platform:
+
+Kansje: "${titel}" in ${locatie}
+Naam huurder: ${naam}
+E-mail huurder: ${email}
+Bericht: "${bericht}"
+
+Schrijf de mail alsof Vakantiekansjes.nl hem doorstuurt naar de verhuurder. Vermeld de huurdergegevens duidelijk zodat de verhuurder kan reageren. Warm, kort, professioneel. Max 10 regels.`;
+
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await resp.json();
+    // In productie: stuur data.content naar Resend API
+    // Nu: toon bevestiging aan huurder
+    succEl.textContent=`✓ Je bericht is verstuurd! De verhuurder ontvangt een e-mail en reageert zo snel mogelijk op ${email}.`;
+    succEl.style.display='block';
+    document.getElementById(`cf-bericht-${id}`).value='';
+    btn.textContent='✓ Verstuurd!';
+  } catch(e){
+    errEl.textContent='Er ging iets mis. Probeer het opnieuw.';
+    errEl.style.display='block';
+    btn.textContent='Bericht versturen →';
+    btn.disabled=false;
+  } finally {
+    contactFormBezig=false;
+  }
+}
+
+function sluitDetail(){document.getElementById('detail-overlay').classList.remove('open');document.body.style.overflow='';}
+function sluitDetailBuiten(e){if(e.target===document.getElementById('detail-overlay'))sluitDetail();}
+
+// ═══ PLAATSEN MODAL ═══
+function openPlaatsenModal(){
+  document.getElementById('plaatsen-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+  resetPlaatsen();
+  zetDatumLimits();
+  switchTab('plaatsen',document.querySelector('.modal-tab'));
+}
+function sluitPlaatsen(){document.getElementById('plaatsen-overlay').classList.remove('open');document.body.style.overflow='';}
+function sluitPlaatsenBuiten(e){if(e.target===document.getElementById('plaatsen-overlay'))sluitPlaatsen();}
+
+function switchTab(tab,btn){
+  document.querySelectorAll('.modal-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-plaatsen').style.display=tab==='plaatsen'?'':'none';
+  document.getElementById('tab-zoeken').style.display=tab==='zoeken'?'':'none';
+}
+
+function resetPlaatsen(){
+  document.getElementById('stap-form').style.display='';
+  document.getElementById('stap-verif').style.display='none';
+  document.getElementById('stap-klaar').style.display='none';
+  document.getElementById('form-loading').style.display='none';
+  document.getElementById('form-error').style.display='none';
+}
+
+function zetDatumLimits(){
+  const max=fmt(addD(nu,42)),today=fmt(nu);
+  ['f-van','f-tot'].forEach(id=>{document.getElementById(id).min=today;document.getElementById(id).max=max;});
+}
+
+function toggleWA(){
+  const cb=document.getElementById('f-wa-enabled');
+  const wrap=document.getElementById('wa-nr-wrap');
+  setTimeout(()=>{wrap.style.display=cb.checked?'block':'none';},0);
+}
+
+function previewFotos(input){
+  const preview=document.getElementById('foto-preview');
+  preview.innerHTML='';
+  Array.from(input.files).slice(0,5).forEach(file=>{
+    const reader=new FileReader();
+    reader.onload=e=>{const img=document.createElement('img');img.src=e.target.result;preview.appendChild(img);};
+    reader.readAsDataURL(file);
+  });
+}
+
+function valideer(){
+  const v=[['f-titel','Naam verblijf'],['f-type','Type woning'],['f-land','Land'],['f-oudprijs','Normale prijs'],['f-minnachten','Min. nachten'],['f-locatie','Locatie'],['f-personen','Personen'],['f-prijs','Prijs'],['f-van','Aankomstdatum'],['f-tot','Vertrekdatum'],['f-naam','Naam'],['f-email','E-mailadres']];
+  for(const[id,label]of v){if(!document.getElementById(id).value.trim())return`Vul het veld "${label}" in.`;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('f-email').value))return'Vul een geldig e-mailadres in.';
+  const oudP=parseInt(document.getElementById('f-oudprijs').value);
+  const nwP=parseInt(document.getElementById('f-prijs').value);
+  if(!nwP)return'Vul de aanbiedingsprijs in.';
+  if(nwP>=oudP)return'De aanbiedingsprijs moet lager zijn dan de normale prijs.';
+  const van=new Date(document.getElementById('f-van').value),tot=new Date(document.getElementById('f-tot').value);
+  if(van>=tot)return'"Vertrekdatum" moet na "Aankomstdatum" liggen.';
+  if(tot>addD(nu,42))return'Maximaal 6 weken in de toekomst.';
+  if(document.getElementById('f-wa-enabled').checked&&!document.getElementById('f-wa-nr').value.trim())return'Vul je WhatsApp-nummer in of zet WhatsApp uit.';
+  return null;
+}
+
+async function plaatsKansje(){
+  const err=valideer();
+  const errEl=document.getElementById('form-error');
+  errEl.style.display='none';
+  if(err){errEl.textContent=err;errEl.style.display='block';errEl.scrollIntoView({behavior:'smooth',block:'nearest'});return;}
+
+  const naam=document.getElementById('f-naam').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const titel=document.getElementById('f-titel').value.trim();
+  const locatie=document.getElementById('f-locatie').value.trim();
+  const waEnabled=document.getElementById('f-wa-enabled').checked;
+  const waNr=waEnabled?document.getElementById('f-wa-nr').value.replace(/^0/,'31').replace(/\D/g,''):'';
+
+  // Lees preview foto als die er is
+  let fotoUrl='';
+  const previewImgs=document.getElementById('foto-preview').querySelectorAll('img');
+  if(previewImgs.length>0)fotoUrl=previewImgs[0].src;
+
+  document.getElementById('form-loading').style.display='flex';
+  document.getElementById('btn-verstuur').disabled=true;
+
+  const tid=Date.now();
+  pendingKaartje={
+    _tid:tid,
+    titel,locatie,
+    type:document.getElementById('f-type').value,
+    land:document.getElementById('f-land').value,
+    oudePrijs:parseInt(document.getElementById('f-oudprijs').value),
+    prijs:parseInt(document.getElementById('f-prijs').value),
+    minNachten:parseInt(document.getElementById('f-minnachten').value)||1,
+    personen:parseInt(document.getElementById('f-personen').value),
+    van:document.getElementById('f-van').value,
+    tot:document.getElementById('f-tot').value,
+    urgency:'Nieuw!',
+    badges:[document.getElementById('f-land').value||'Europa'],
+    omschrijving:document.getElementById('f-omschrijving').value.trim(),
+    contact:document.getElementById('f-contact').value.trim(),
+    wa:waNr,
+    foto:fotoUrl||'',
+  };
+
+  try{
+    const prompt=`Je bent de afzender van verificatiemails voor Vakantiekansjes.nl.
+
+Schrijf een korte, vriendelijke Nederlandse verificatiemail (plain tekst) voor verhuurder ${naam}, die "${titel}" in ${locatie} heeft aangemeld.
+
+Inhoud:
+1. Persoonlijke begroeting
+2. Bevestig dat het kansje bijna live staat
+3. Verificatielink (schrijf letterlijk): [VERIFICATIELINK]
+4. Link is 48 uur geldig
+5. Warme afsluiting namens Vakantiekansjes.nl
+
+Warm, informeel, max 10 regels. Geen AI-jargon.`;
+
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
+    const data=await resp.json();
+    const mailTekst=data.content.map(i=>i.text||'').join('');
+    document.getElementById('verif-mail-preview').textContent=mailTekst;
+    document.getElementById('stap-form').style.display='none';
+    document.getElementById('stap-verif').style.display='';
+  }catch(e){
+    errEl.textContent='Er ging iets mis. Probeer het opnieuw.';
+    errEl.style.display='block';
+  }finally{
+    document.getElementById('form-loading').style.display='none';
+    document.getElementById('btn-verstuur').disabled=false;
+  }
+}
+
+function simuleerVerificatie(){document.getElementById('stap-verif').style.display='none';document.getElementById('stap-klaar').style.display='';}
+function herplaatsMail(){const btn=document.getElementById('btn-opnieuw');btn.textContent='✓ Verstuurd';btn.disabled=true;setTimeout(()=>{btn.textContent='Verstuur opnieuw';btn.disabled=false;},4000);}
+function sluitEnToonNieuw(){
+  if(pendingKaartje){extraKaartjes.unshift(pendingKaartje);pendingKaartje=null;}
+  sluitPlaatsen();filterKansjes();
+  document.getElementById('kansjes').scrollIntoView({behavior:'smooth'});
+}
+
+// ═══ ZOEKOPDRACHT ═══
+function plaatsZoekopdracht(){
+  const naam=document.getElementById('sz-naam').value.trim();
+  const email=document.getElementById('sz-email').value.trim();
+  const van=document.getElementById('sz-van').value;
+  const tot=document.getElementById('sz-tot').value;
+  if(!naam||!email){alert('Vul je naam en e-mailadres in.');return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){alert('Vul een geldig e-mailadres in.');return;}
+  const res=document.getElementById('zoek-resultaat');
+  const tekst=document.getElementById('zoek-matches-tekst');
+  res.classList.add('show');
+  const matches=van&&tot?KANSJES.filter(k=>heeftOverlap(k,van,tot)).length:0;
+  tekst.innerHTML=`✓ Opgeslagen, ${naam}! ${van&&tot?`Er zijn nu <span class="zoek-matches">${matches} kansjes</span> die overlappen met jouw periode. `:''}Zodra er een nieuw kansje past, mailen we je op ${email}.`;
+}
+
+async function plaatsZoekopdracht2(){
+  const naam=document.getElementById('sz2-naam').value.trim();
+  const email=document.getElementById('sz2-email').value.trim();
+  const van=document.getElementById('sz2-van').value;
+  const tot=document.getElementById('sz2-tot').value;
+  const errEl=document.getElementById('zoek-error');
+  errEl.style.display='none';
+  if(!van||!tot){errEl.textContent='Vul een aankomst- en vertrekdatum in.';errEl.style.display='block';return;}
+  if(!naam||!email){errEl.textContent='Vul je naam en e-mailadres in.';errEl.style.display='block';return;}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){errEl.textContent='Vul een geldig e-mailadres in.';errEl.style.display='block';return;}
+  const btn=document.getElementById('btn-zoek-verstuur');
+  btn.textContent='⏳ Bezig…';btn.disabled=true;
+  try{
+    const cat=document.getElementById('sz2-cat').value;
+    const budget=document.getElementById('sz2-budget').value;
+    const personen=document.getElementById('sz2-personen').value;
+    const prompt=`Schrijf een korte bevestigingsmail (plain tekst) namens Vakantiekansjes.nl voor ${naam} die een zoekopdracht achterliet. Periode: ${fmtNL(van)} t/m ${fmtNL(tot)}${cat?', omgeving: '+cat:''}${budget?', budget: €'+budget+'/nacht':''}${personen?', personen: '+personen:''}. E-mail: ${email}. Bevestig opslaan, vertel dat verhuurders zelf contact opnemen. Warm, kort, max 8 regels.`;
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})});
+    await resp.json();
+    document.getElementById('tab-zoeken').innerHTML=`<div class="bevestig-screen"><span class="screen-icon">🔍</span><h2>Zoekopdracht opgeslagen!</h2><p>Verhuurders met een passend kansje nemen contact op via ${email}.</p><button class="btn btn-secondary btn-lg" onclick="sluitPlaatsen()">Sluiten</button></div>`;
+  }catch(e){
+    errEl.textContent='Er ging iets mis. Probeer het opnieuw.';errEl.style.display='block';
+    btn.textContent='Zoekopdracht plaatsen ✓';btn.disabled=false;
+  }
+}
+
+
+// Live korting preview
+['f-oudprijs','f-prijs'].forEach(id => {
+  const el = document.getElementById(id);
+  if(el) el.addEventListener('input', toonKortingPreview);
+});
+function toonKortingPreview(){
+  const oud = parseInt(document.getElementById('f-oudprijs').value);
+  const nw = parseInt(document.getElementById('f-prijs').value);
+  const prev = document.getElementById('korting-preview');
+  if(oud>0 && nw>0 && nw<oud){
+    const pct = Math.round((1-nw/oud)*100);
+    prev.textContent = `✓ ${pct}% korting — huurders zien €${oud} doorgestreept en €${nw} als aanbiedingsprijs`;
+    prev.style.display='block';
+  } else {
+    prev.style.display='none';
+  }
+}
+
+// ═══ INIT ═══
+
+function updateDatumDisplay(inputId, dispId) {
+  const input = document.getElementById(inputId);
+  const disp = document.getElementById(dispId);
+  if (!input || !disp) return;
+  if (input.value) {
+    disp.textContent = fmtNL(input.value);
+    disp.classList.remove('leeg');
+  } else {
+    disp.textContent = 'Kies datum';
+    disp.classList.add('leeg');
+  }
+}
+
+function vulLandenDropdowns() {
+  // Zoekbalk + zoekopdracht: alleen landen met actueel aanbod
+  const landenMetAanbod = [...new Set(alleKansjes().map(k => k.land).filter(Boolean))].sort();
+  ['z-land','sz-land','sz2-land'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    // Verwijder bestaande opties behalve de eerste (Alle landen / Maakt niet uit)
+    while (el.options.length > 1) el.remove(1);
+    landenMetAanbod.forEach(land => {
+      const opt = document.createElement('option');
+      opt.value = land;
+      opt.textContent = land;
+      el.appendChild(opt);
+    });
+  });
+  // Plaatsformulier: alle Europese landen
+  const fLand = document.getElementById('f-land');
+  if (fLand) {
+    while (fLand.options.length > 1) fLand.remove(1);
+    EU_LANDEN.forEach(land => {
+      const opt = document.createElement('option');
+      opt.value = land;
+      opt.textContent = land;
+      fLand.appendChild(opt);
+    });
+  }
+}
+
+function zetZoekbalkDatumLimits() {
+  const today = fmt(nu);
+  const max = fmt(addD(nu, 42));
+  ['z-van','z-tot'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.min = today; el.max = max; }
+  });
+}
+
+vulLandenDropdowns();
+zetZoekbalkDatumLimits();
+filterKansjes();
+</script>
+</body>
+</html>
