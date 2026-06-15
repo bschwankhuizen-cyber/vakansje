@@ -254,6 +254,12 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
 </head>
 <body>
 
+<!-- VERIFICATIE BANNER -->
+<div id="verif-banner" style="display:none;background:var(--teal);color:white;text-align:center;padding:14px 2rem;font-size:15px;font-weight:500;">
+  <span id="verif-banner-tekst"></span>
+  <button onclick="document.getElementById('verif-banner').style.display='none'" style="background:none;border:none;color:white;margin-left:16px;cursor:pointer;font-size:18px;line-height:1;">✕</button>
+</div>
+
 <nav>
   <a href="#" class="logo-link" style="display:flex;align-items:center;text-decoration:none;">
     <svg viewBox="0 0 446 47" height="28" xmlns="http://www.w3.org/2000/svg" style="display:block;">
@@ -756,25 +762,18 @@ async function verstuurBericht(id, contactEmail, titel, locatie){
   btn.textContent='⏳ Versturen…'; btn.disabled=true;
 
   try {
-    const prompt=`Schrijf een korte, vriendelijke Nederlandse doorstuur-e-mail (plain tekst) namens Vakantiekansjes.nl.
-
-Een geïnteresseerde huurder heeft een bericht gestuurd via het platform:
-
-Kansje: "${titel}" in ${locatie}
-Naam huurder: ${naam}
-E-mail huurder: ${email}
-Bericht: "${bericht}"
-
-Schrijf de mail alsof Vakantiekansjes.nl hem doorstuurt naar de verhuurder. Vermeld de huurdergegevens duidelijk zodat de verhuurder kan reageren. Warm, kort, professioneel. Max 10 regels.`;
-
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})
+    const resp = await fetch('/api/bericht', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        kansjeId: id,
+        huurderNaam: naam,
+        huurderEmail: email,
+        bericht,
+      })
     });
-    const data=await resp.json();
-    // In productie: stuur data.content naar Resend API
-    // Nu: toon bevestiging aan huurder
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Serverfout');
     succEl.textContent=`✓ Je bericht is verstuurd! De verhuurder ontvangt een e-mail en reageert zo snel mogelijk op ${email}.`;
     succEl.style.display='block';
     document.getElementById(`cf-bericht-${id}`).value='';
@@ -896,27 +895,32 @@ async function plaatsKansje(){
   };
 
   try{
-    const prompt=`Je bent de afzender van verificatiemails voor Vakantiekansjes.nl.
-
-Schrijf een korte, vriendelijke Nederlandse verificatiemail (plain tekst) voor verhuurder ${naam}, die "${titel}" in ${locatie} heeft aangemeld.
-
-Inhoud:
-1. Persoonlijke begroeting
-2. Bevestig dat het kansje bijna live staat
-3. Verificatielink (schrijf letterlijk): [VERIFICATIELINK]
-4. Link is 48 uur geldig
-5. Warme afsluiting namens Vakantiekansjes.nl
-
-Warm, informeel, max 10 regels. Geen AI-jargon.`;
-
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,messages:[{role:'user',content:prompt}]})});
-    const data=await resp.json();
-    const mailTekst=data.content.map(i=>i.text||'').join('');
-    document.getElementById('verif-mail-preview').textContent=mailTekst;
+    const resp = await fetch('/api/kansje', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        titel, locatie, naam, email,
+        type: document.getElementById('f-type').value,
+        land: document.getElementById('f-land').value,
+        oude_prijs: parseInt(document.getElementById('f-oudprijs').value),
+        prijs: parseInt(document.getElementById('f-prijs').value),
+        min_nachten: parseInt(document.getElementById('f-minnachten').value) || 1,
+        personen: parseInt(document.getElementById('f-personen').value),
+        van: document.getElementById('f-van').value,
+        tot: document.getElementById('f-tot').value,
+        omschrijving: document.getElementById('f-omschrijving').value.trim(),
+        contact: document.getElementById('f-contact').value.trim(),
+        wa: waNr,
+        urgency: 'Nieuw!',
+      })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Serverfout');
+    document.getElementById('verif-mail-preview').textContent = data.mailTekst || 'Verificatiemail verstuurd!';
     document.getElementById('stap-form').style.display='none';
     document.getElementById('stap-verif').style.display='';
   }catch(e){
-    errEl.textContent='Er ging iets mis. Probeer het opnieuw.';
+    errEl.textContent = 'Er ging iets mis: ' + (e.message || 'probeer het opnieuw.');
     errEl.style.display='block';
   }finally{
     document.getElementById('form-loading').style.display='none';
@@ -960,12 +964,19 @@ async function plaatsZoekopdracht2(){
   const btn=document.getElementById('btn-zoek-verstuur');
   btn.textContent='⏳ Bezig…';btn.disabled=true;
   try{
-    const cat=document.getElementById('sz2-cat').value;
-    const budget=document.getElementById('sz2-budget').value;
-    const personen=document.getElementById('sz2-personen').value;
-    const prompt=`Schrijf een korte bevestigingsmail (plain tekst) namens Vakantiekansjes.nl voor ${naam} die een zoekopdracht achterliet. Periode: ${fmtNL(van)} t/m ${fmtNL(tot)}${cat?', omgeving: '+cat:''}${budget?', budget: €'+budget+'/nacht':''}${personen?', personen: '+personen:''}. E-mail: ${email}. Bevestig opslaan, vertel dat verhuurders zelf contact opnemen. Warm, kort, max 8 regels.`;
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:400,messages:[{role:'user',content:prompt}]})});
-    await resp.json();
+    const resp = await fetch('/api/zoekopdracht', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        naam, email, van, tot,
+        land: document.getElementById('sz2-land').value,
+        budget: document.getElementById('sz2-budget').value,
+        personen: document.getElementById('sz2-personen').value,
+        opmerking: document.getElementById('sz2-opmerking').value.trim(),
+      })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Serverfout');
     document.getElementById('tab-zoeken').innerHTML=`<div class="bevestig-screen"><span class="screen-icon">🔍</span><h2>Zoekopdracht opgeslagen!</h2><p>Verhuurders met een passend kansje nemen contact op via ${email}.</p><button class="btn btn-secondary btn-lg" onclick="sluitPlaatsen()">Sluiten</button></div>`;
   }catch(e){
     errEl.textContent='Er ging iets mis. Probeer het opnieuw.';errEl.style.display='block';
@@ -1044,9 +1055,57 @@ function zetZoekbalkDatumLimits() {
   });
 }
 
+// ═══ INIT ═══
+async function laadKansjesVanApi() {
+  try {
+    const resp = await fetch('/api/kansjes');
+    if (!resp.ok) throw new Error();
+    const data = await resp.json();
+    if (data.kansjes && data.kansjes.length > 0) {
+      // Voeg API kansjes toe bovenop demo kansjes
+      // In productie kun je KANSJES = [] maken en alleen API kansjes tonen
+      data.kansjes.forEach(k => {
+        k._tid = k.id; // zorg dat openDetail werkt
+        if (!alleKansjes().find(x => x.id === k.id)) {
+          extraKaartjes.push(k);
+        }
+      });
+    }
+  } catch(e) {
+    // API niet beschikbaar — demo kansjes blijven zichtbaar
+    console.log('Kansjes API niet bereikbaar, demo data getoond');
+  }
+  filterKansjes();
+}
+
+function checkVerifiedParam() {
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('verified');
+  const titel = params.get('titel');
+  if (!status) return;
+
+  const banner = document.getElementById('verif-banner');
+  const tekst = document.getElementById('verif-banner-tekst');
+  const berichten = {
+    'ok': `🎉 Gelukt! Je kansje "${titel || 'je woning'}" staat nu live op Vakantiekansjes.nl.`,
+    'al_actief': '✓ Dit kansje was al geactiveerd en staat live.',
+    'verlopen': '⚠️ De verificatielink is verlopen (48 uur). Plaats je kansje opnieuw.',
+    'ongeldig': '⚠️ Ongeldige verificatielink. Controleer de link in je e-mail.',
+    'fout': '⚠️ Er ging iets mis bij het activeren. Probeer het opnieuw of neem contact op.',
+  };
+  if (berichten[status]) {
+    tekst.textContent = berichten[status];
+    banner.style.background = status === 'ok' || status === 'al_actief' ? 'var(--teal)' : 'var(--coral)';
+    banner.style.display = 'block';
+    // Verwijder param uit URL zonder reload
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+}
+
 vulLandenDropdowns();
 zetZoekbalkDatumLimits();
-filterKansjes();
+checkVerifiedParam();
+laadKansjesVanApi();
 </script>
 </body>
 </html>
