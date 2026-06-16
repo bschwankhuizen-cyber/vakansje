@@ -642,7 +642,7 @@ function renderGrid(lijst){
     return;
   }
   grid.innerHTML=lijst.map(k=>`
-    <article class="kaartje" onclick="openDetail(${k.id||k._tid})">
+    <article class="kaartje" onclick="openDetail('${k.id||k._tid}')">
       <div class="kaartje-foto">
         <img src="${k.foto_url||k.foto||UNSPLASH[Math.abs(Array.from(String(k.id||k._tid)).reduce((a,c)=>a+c.charCodeAt(0),0))%UNSPLASH.length]}" alt="${k.titel}" loading="lazy">
         <span class="kaartje-urgency">${k.urgency}</span>
@@ -670,7 +670,7 @@ function toggleFav(btn){btn.textContent=btn.textContent==='🤍'?'❤️':'🤍'
 
 // ═══ DETAIL ═══
 function openDetail(id){
-  const k=alleKansjes().find(x=>(x.id||x._tid)===id);
+  const k=alleKansjes().find(x=>String(x.id||x._tid)===String(id));
   if(!k)return;
   const foto=k.foto_url||k.foto||UNSPLASH[Math.abs(Array.from(String(k.id||k._tid)).reduce((a,c)=>a+c.charCodeAt(0),0))%UNSPLASH.length];
   const heeftWA=!!k.wa;
@@ -1090,9 +1090,12 @@ async function laadKansjesVanApi() {
       // Voeg API kansjes toe bovenop demo kansjes
       // In productie kun je KANSJES = [] maken en alleen API kansjes tonen
       data.kansjes.forEach(k => {
-        k._tid = k.id; // zorg dat openDetail werkt
-        if (!alleKansjes().find(x => x.id === k.id)) {
-          extraKaartjes.push(k);
+       k._tid = k.id;
+k.badges = k.badges || [k.land || 'Europa'];
+k.oudePrijs = k.oude_prijs;
+k.minNachten = k.min_nachten;
+if (!alleKansjes().find(x => String(x.id) === String(k.id))) {
+  extraKaartjes.unshift(k);
         }
       });
     }
