@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Verplichte velden ontbreken' });
     }
 
-    // Haal kansje op uit Supabase
+    // Haal kansje op
     const { data: kansje, error } = await supabase
       .from('kansjes')
       .select('titel, locatie, email, naam')
@@ -35,7 +35,21 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Kansje niet gevonden' });
     }
 
-    // AI-gegenereerde doorstuurmail
+    // Reactie opslaan in reacties tabel
+    await supabase.from('reacties').insert({
+      kansje_id: kansjeId,
+      kansje_titel: kansje.titel,
+      type: 'bericht',
+      gast_naam: huurderNaam,
+      gast_email: huurderEmail,
+      bericht,
+    });
+
+    // Gast opslaan of updaten
+    await supabase.from('gasten')
+      .upsert({ naam: huurderNaam, email: huurderEmail }, { onConflict: 'email', ignoreDuplicates: false });
+
+    // AI doorstuurmail
     const aiResp = await anthropic.messages.create({
       model: 'claude-sonnet-4-6',
       max_tokens: 500,
@@ -56,7 +70,7 @@ Stuur dit door naar de verhuurder (${kansje.naam}). Vermeld de huurdergegevens d
 
     const mailTekst = aiResp.content.map(b => b.text || '').join('');
 
-    // Verstuur naar verhuurder
+    // Mail naar verhuurder
     await resend.emails.send({
       from: 'Vakantiekansjes.nl <noreply@vakantiekansjes.nl>',
       to: kansje.email,
@@ -65,7 +79,7 @@ Stuur dit door naar de verhuurder (${kansje.naam}). Vermeld de huurdergegevens d
       text: mailTekst,
     });
 
-    // Bevestigingsmail naar huurder
+    // Bevestigingsmail naar gast
     await resend.emails.send({
       from: 'Vakantiekansjes.nl <noreply@vakantiekansjes.nl>',
       to: huurderEmail,
