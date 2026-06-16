@@ -183,10 +183,21 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
 .fg textarea { resize: vertical; min-height: 80px; }
 .fg-hint { font-size: 12px; color: var(--gray-500); margin-top: 3px; }
 .fg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.foto-upload-box { border: 2px dashed var(--gray-300); border-radius: 10px; padding: 1.5rem; text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+.foto-upload-box { border: 2px dashed var(--gray-300); border-radius: 10px; padding: 1.25rem; text-align: center; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
 .foto-upload-box:hover { border-color: var(--navy); background: var(--navy-light); }
-.foto-preview { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
-.foto-preview img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; }
+.foto-upload-box.vol { border-color: var(--gray-100); opacity: 0.5; cursor: not-allowed; }
+.foto-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.foto-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; background: var(--gray-100); border: 2px solid transparent; cursor: grab; transition: border-color 0.15s, transform 0.15s; }
+.foto-item:hover { border-color: var(--navy); }
+.foto-item.dragging { opacity: 0.5; transform: scale(0.95); cursor: grabbing; }
+.foto-item.drag-over { border-color: var(--coral); border-style: dashed; }
+.foto-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.foto-item-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background 0.15s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+.foto-item:hover .foto-item-overlay { background: rgba(0,0,0,0.35); }
+.foto-item-btn { opacity: 0; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; transition: opacity 0.15s; }
+.foto-item:hover .foto-item-btn { opacity: 1; }
+.foto-item-nr { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.55); color: white; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.foto-item-uploading { position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; }
 .form-loading { background: var(--coral-light); border-radius: 8px; padding: 11px 14px; font-size: 14px; color: var(--coral-dark); font-weight: 500; margin-bottom: 1rem; display: none; align-items: center; gap: 10px; }
 .form-error { background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; padding: 11px 14px; font-size: 14px; color: #B91C1C; margin-bottom: 1rem; display: none; }
 .form-success { background: var(--teal-light); border: 1px solid var(--teal); border-radius: 8px; padding: 11px 14px; font-size: 14px; color: #0F6E56; margin-bottom: 1rem; display: none; }
@@ -451,15 +462,15 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
 
         <div class="form-section">Foto's</div>
         <div class="fg">
-          <div class="foto-upload-box" onclick="document.getElementById('foto-input').click()">
+          <div class="foto-upload-box" id="foto-upload-box" onclick="fotoKlikUpload()">
             <div style="font-size:2rem;margin-bottom:6px;">📷</div>
-            <div style="font-size:14px;font-weight:600;color:var(--navy);">Klik om foto's toe te voegen</div>
-            <div style="font-size:12px;color:var(--gray-500);margin-top:3px;">Max. 5 foto's · JPG of PNG</div>
+            <div style="font-size:14px;font-weight:600;color:var(--navy);" id="foto-upload-tekst">Klik om foto's toe te voegen</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-top:3px;">Min. 1 · max. 3 foto's · JPG of PNG</div>
           </div>
-          <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="previewFotos(this)">
-          <div class="foto-preview" id="foto-preview"></div>
-          <div id="foto-upload-status" style="font-size:13px;margin-top:6px;display:none;"></div>
-          <p class="fg-hint">Tip: een mooie foto zorgt voor 3× meer reacties</p>
+          <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="fotosBijgevoegd(this)">
+          <div class="foto-grid" id="foto-grid"></div>
+          <div id="foto-upload-status" style="font-size:13px;margin-top:8px;display:none;"></div>
+          <p class="fg-hint">Versleep foto's om de volgorde te veranderen · Eerste foto is de hoofdfoto</p>
         </div>
 
         <div class="form-section">Beschikbaarheid</div>
@@ -833,6 +844,12 @@ function resetPlaatsen(){
   document.getElementById('stap-klaar').style.display='none';
   document.getElementById('form-loading').style.display='none';
   document.getElementById('form-error').style.display='none';
+  window._fotos = [];
+  const grid = document.getElementById('foto-grid');
+  if (grid) grid.innerHTML = '';
+  const status = document.getElementById('foto-upload-status');
+  if (status) status.style.display = 'none';
+  updateUploadBox();
 }
 
 function zetDatumLimits(){
@@ -846,42 +863,137 @@ function toggleWA(){
   setTimeout(()=>{wrap.style.display=cb.checked?'block':'none';},0);
 }
 
-async function previewFotos(input){
-  const preview=document.getElementById('foto-preview');
-  const uploadStatus=document.getElementById('foto-upload-status');
-  preview.innerHTML='';
-  window._geuploadeFotos=[];
-  const files=Array.from(input.files).slice(0,5);
-  if(!files.length)return;
-  uploadStatus.textContent='\u23F3 Foto\'s worden ge\u00FCpload\u2026';
-  uploadStatus.style.color='var(--gray-500)';
-  uploadStatus.style.display='block';
-  for(const file of files){
-    try{
-      const previewUrl=await new Promise(r=>{
-        const reader=new FileReader();
-        reader.onload=e=>r(e.target.result);
+// ═══ FOTO BEHEER ═══
+window._fotos = []; // [{url, preview}]
+let dragSrcIdx = null;
+
+function fotoKlikUpload() {
+  if (window._fotos.length >= 3) return;
+  document.getElementById('foto-input').value = '';
+  document.getElementById('foto-input').click();
+}
+
+async function fotosBijgevoegd(input) {
+  const bestaand = window._fotos.length;
+  const ruimte = 3 - bestaand;
+  if (ruimte <= 0) return;
+  const files = Array.from(input.files).slice(0, ruimte);
+  if (!files.length) return;
+
+  const statusEl = document.getElementById('foto-upload-status');
+  statusEl.textContent = '⏳ Foto\'s uploaden…';
+  statusEl.style.color = 'var(--gray-500)';
+  statusEl.style.display = 'block';
+
+  for (const file of files) {
+    // Maak tijdelijk item met loading spinner
+    const tmpIdx = window._fotos.length;
+    window._fotos.push({ url: null, preview: null, loading: true });
+    renderFotoGrid();
+
+    try {
+      const previewUrl = await new Promise(r => {
+        const reader = new FileReader();
+        reader.onload = e => r(e.target.result);
         reader.readAsDataURL(file);
       });
-      const img=document.createElement('img');
-      img.src=previewUrl;
-      preview.appendChild(img);
-      const base64=previewUrl.split(',')[1];
-      const resp=await fetch('/api/foto',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base64,bestandsnaam:file.name,mimeType:file.type})});
-      const data=await resp.json();
-      if(!resp.ok)throw new Error(data.error);
-      window._geuploadeFotos.push(data.url);
-    }catch(e){
-      uploadStatus.textContent='\u26A0\uFE0F Upload mislukt: '+e.message;
-      uploadStatus.style.color='var(--coral)';
+      const base64 = previewUrl.split(',')[1];
+      const resp = await fetch('/api/foto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base64, bestandsnaam: file.name, mimeType: file.type })
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error);
+      window._fotos[tmpIdx] = { url: data.url, preview: previewUrl, loading: false };
+    } catch(e) {
+      window._fotos.splice(tmpIdx, 1);
+      statusEl.textContent = '⚠️ Upload mislukt: ' + e.message;
+      statusEl.style.color = 'var(--coral)';
+      renderFotoGrid();
       return;
     }
+    renderFotoGrid();
   }
-  uploadStatus.textContent='\u2713 '+files.length+' foto'+(files.length>1?"'s":'')+' ge\u00FCpload';
-  uploadStatus.style.color='var(--teal)';
+
+  statusEl.textContent = '✓ ' + window._fotos.length + ' foto' + (window._fotos.length !== 1 ? "'s" : '') + ' klaar';
+  statusEl.style.color = 'var(--teal)';
+  updateUploadBox();
+}
+
+function renderFotoGrid() {
+  const grid = document.getElementById('foto-grid');
+  grid.innerHTML = '';
+  window._fotos.forEach((foto, idx) => {
+    const item = document.createElement('div');
+    item.className = 'foto-item';
+    item.draggable = true;
+    item.dataset.idx = idx;
+
+    if (foto.loading) {
+      item.innerHTML = `<div class="foto-item-uploading"><div class="spinner" style="border-top-color:var(--navy);border-color:var(--gray-100);"></div></div>`;
+    } else {
+      item.innerHTML = `
+        <img src="${foto.preview || foto.url}" alt="Foto ${idx+1}">
+        <div class="foto-item-nr">${idx+1}</div>
+        <div class="foto-item-overlay">
+          <button class="foto-item-btn" onclick="verwijderFoto(${idx})" title="Verwijder">🗑️</button>
+        </div>`;
+    }
+
+    // Drag events
+    item.addEventListener('dragstart', e => { dragSrcIdx = idx; item.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); document.querySelectorAll('.foto-item').forEach(i => i.classList.remove('drag-over')); });
+    item.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      if (dragSrcIdx === null || dragSrcIdx === idx) return;
+      const moved = window._fotos.splice(dragSrcIdx, 1)[0];
+      window._fotos.splice(idx, 0, moved);
+      dragSrcIdx = null;
+      renderFotoGrid();
+      const statusEl = document.getElementById('foto-upload-status');
+      statusEl.textContent = '✓ Volgorde aangepast — eerste foto is de hoofdfoto';
+      statusEl.style.color = 'var(--teal)';
+      statusEl.style.display = 'block';
+    });
+
+    grid.appendChild(item);
+  });
+  updateUploadBox();
+}
+
+function verwijderFoto(idx) {
+  window._fotos.splice(idx, 1);
+  renderFotoGrid();
+  const statusEl = document.getElementById('foto-upload-status');
+  if (window._fotos.length === 0) {
+    statusEl.textContent = 'Foto verwijderd — voeg minimaal 1 foto toe';
+    statusEl.style.color = 'var(--sun)';
+    statusEl.style.display = 'block';
+  } else {
+    statusEl.textContent = window._fotos.length + ' foto' + (window._fotos.length !== 1 ? "'s" : '') + ' — versleep om volgorde te wijzigen';
+    statusEl.style.color = 'var(--gray-500)';
+  }
+}
+
+function updateUploadBox() {
+  const box = document.getElementById('foto-upload-box');
+  const tekst = document.getElementById('foto-upload-tekst');
+  if (!box || !tekst) return;
+  const vol = window._fotos.length >= 3;
+  box.classList.toggle('vol', vol);
+  tekst.textContent = vol
+    ? 'Maximum van 3 foto\'s bereikt'
+    : window._fotos.length === 0
+      ? 'Klik om foto\'s toe te voegen'
+      : `Nog ${3 - window._fotos.length} foto${3 - window._fotos.length !== 1 ? "'s" : ""} toe te voegen`;
 }
 
 function valideer(){
+  if(!window._fotos||window._fotos.length===0)return'Voeg minimaal 1 foto toe.';
   const v=[['f-titel','Naam verblijf'],['f-type','Type woning'],['f-land','Land'],['f-oudprijs','Normale prijs'],['f-minnachten','Min. nachten'],['f-locatie','Locatie'],['f-personen','Personen'],['f-prijs','Prijs'],['f-van','Aankomstdatum'],['f-tot','Vertrekdatum'],['f-naam','Naam'],['f-email','E-mailadres']];
   for(const[id,label]of v){if(!document.getElementById(id).value.trim())return`Vul het veld "${label}" in.`;}
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('f-email').value))return'Vul een geldig e-mailadres in.';
@@ -909,8 +1021,8 @@ async function plaatsKansje(){
   const waEnabled=document.getElementById('f-wa-enabled').checked;
   const waNr=waEnabled?document.getElementById('f-wa-nr').value.replace(/^0/,'31').replace(/\D/g,''):'';
 
-  // Lees preview foto als die er is
-  const fotoUrl=(window._geuploadeFotos&&window._geuploadeFotos.length>0)?window._geuploadeFotos[0]:'';
+  // Eerste foto als hoofd-foto
+  const fotoUrl=(window._fotos&&window._fotos.length>0)?window._fotos[0].url:'';
 
   document.getElementById('form-loading').style.display='flex';
   document.getElementById('btn-verstuur').disabled=true;
