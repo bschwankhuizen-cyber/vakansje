@@ -458,6 +458,7 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
           </div>
           <input type="file" id="foto-input" accept="image/*" multiple style="display:none" onchange="previewFotos(this)">
           <div class="foto-preview" id="foto-preview"></div>
+          <div id="foto-upload-status" style="font-size:13px;margin-top:6px;display:none;"></div>
           <p class="fg-hint">Tip: een mooie foto zorgt voor 3× meer reacties</p>
         </div>
 
@@ -641,9 +642,9 @@ function renderGrid(lijst){
     return;
   }
   grid.innerHTML=lijst.map(k=>`
-    <article class="kaartje" onclick="openDetail('${k.id||k._tid}')">
+    <article class="kaartje" onclick="openDetail(${k.id||k._tid})">
       <div class="kaartje-foto">
-        <img src="${k.foto||UNSPLASH[(k.id||k._tid)%UNSPLASH.length]}" alt="${k.titel}" loading="lazy">
+        <img src="${k.foto_url||k.foto||UNSPLASH[Math.abs(Array.from(String(k.id||k._tid)).reduce((a,c)=>a+c.charCodeAt(0),0))%UNSPLASH.length]}" alt="${k.titel}" loading="lazy">
         <span class="kaartje-urgency">${k.urgency}</span>
         <button class="kaartje-fav" onclick="event.stopPropagation();toggleFav(this)" title="Bewaar">🤍</button>
       </div>
@@ -669,9 +670,9 @@ function toggleFav(btn){btn.textContent=btn.textContent==='🤍'?'❤️':'🤍'
 
 // ═══ DETAIL ═══
 function openDetail(id){
-  const k=alleKansjes().find(x=>String(x.id||x._tid)===String(id));
+  const k=alleKansjes().find(x=>(x.id||x._tid)===id);
   if(!k)return;
-  const foto=k.foto||UNSPLASH[(k.id||k._tid)%UNSPLASH.length];
+  const foto=k.foto_url||k.foto||UNSPLASH[Math.abs(Array.from(String(k.id||k._tid)).reduce((a,c)=>a+c.charCodeAt(0),0))%UNSPLASH.length];
   const heeftWA=!!k.wa;
   const heeftContact=!!k.contact;
 
@@ -828,14 +829,39 @@ function toggleWA(){
   setTimeout(()=>{wrap.style.display=cb.checked?'block':'none';},0);
 }
 
-function previewFotos(input){
+async function previewFotos(input){
   const preview=document.getElementById('foto-preview');
+  const uploadStatus=document.getElementById('foto-upload-status');
   preview.innerHTML='';
-  Array.from(input.files).slice(0,5).forEach(file=>{
-    const reader=new FileReader();
-    reader.onload=e=>{const img=document.createElement('img');img.src=e.target.result;preview.appendChild(img);};
-    reader.readAsDataURL(file);
-  });
+  window._geuploadeFotos=[];
+  const files=Array.from(input.files).slice(0,5);
+  if(!files.length)return;
+  uploadStatus.textContent='\u23F3 Foto\'s worden ge\u00FCpload\u2026';
+  uploadStatus.style.color='var(--gray-500)';
+  uploadStatus.style.display='block';
+  for(const file of files){
+    try{
+      const previewUrl=await new Promise(r=>{
+        const reader=new FileReader();
+        reader.onload=e=>r(e.target.result);
+        reader.readAsDataURL(file);
+      });
+      const img=document.createElement('img');
+      img.src=previewUrl;
+      preview.appendChild(img);
+      const base64=previewUrl.split(',')[1];
+      const resp=await fetch('/api/foto',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base64,bestandsnaam:file.name,mimeType:file.type})});
+      const data=await resp.json();
+      if(!resp.ok)throw new Error(data.error);
+      window._geuploadeFotos.push(data.url);
+    }catch(e){
+      uploadStatus.textContent='\u26A0\uFE0F Upload mislukt: '+e.message;
+      uploadStatus.style.color='var(--coral)';
+      return;
+    }
+  }
+  uploadStatus.textContent='\u2713 '+files.length+' foto'+(files.length>1?"'s":'')+' ge\u00FCpload';
+  uploadStatus.style.color='var(--teal)';
 }
 
 function valideer(){
@@ -867,9 +893,7 @@ async function plaatsKansje(){
   const waNr=waEnabled?document.getElementById('f-wa-nr').value.replace(/^0/,'31').replace(/\D/g,''):'';
 
   // Lees preview foto als die er is
-  let fotoUrl='';
-  const previewImgs=document.getElementById('foto-preview').querySelectorAll('img');
-  if(previewImgs.length>0)fotoUrl=previewImgs[0].src;
+  const fotoUrl=(window._geuploadeFotos&&window._geuploadeFotos.length>0)?window._geuploadeFotos[0]:'';
 
   document.getElementById('form-loading').style.display='flex';
   document.getElementById('btn-verstuur').disabled=true;
@@ -911,6 +935,7 @@ async function plaatsKansje(){
         omschrijving: document.getElementById('f-omschrijving').value.trim(),
         contact: document.getElementById('f-contact').value.trim(),
         wa: waNr,
+        foto_url: fotoUrl||null,
         urgency: 'Nieuw!',
       })
     });
@@ -1062,17 +1087,14 @@ async function laadKansjesVanApi() {
     if (!resp.ok) throw new Error();
     const data = await resp.json();
     if (data.kansjes && data.kansjes.length > 0) {
-  KANSJES.length = 0; // verwijder demokansjes zodra er echte zijn
       // Voeg API kansjes toe bovenop demo kansjes
       // In productie kun je KANSJES = [] maken en alleen API kansjes tonen
-     data.kansjes.forEach(k => {
-  k._tid = k.id;
-  k.badges = k.badges || [k.land || 'Europa'];
-  k.urgency = k.urgency || 'Nieuw!';
-  if (!alleKansjes().find(x => (x.id || x._tid) === k.id)) {
-    extraKaartjes.unshift(k);
-  }
-});
+      data.kansjes.forEach(k => {
+        k._tid = k.id; // zorg dat openDetail werkt
+        if (!alleKansjes().find(x => x.id === k.id)) {
+          extraKaartjes.push(k);
+        }
+      });
     }
   } catch(e) {
     // API niet beschikbaar — demo kansjes blijven zichtbaar
