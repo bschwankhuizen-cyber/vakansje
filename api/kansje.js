@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       titel, locatie, type, land,
       oude_prijs, prijs, min_nachten, personen,
       van, tot, omschrijving, contact, wa, urgency,
-      naam, email
+      naam, email, foto_url
     } = req.body;
 
     // Validatie
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
         titel, locatie, type, land,
         oude_prijs, prijs, min_nachten, personen,
         van, tot, omschrijving, contact, wa, urgency,
-        naam, email,
+        naam, email, foto_url,
         verified: false,
         verify_token: verifyToken,
       })
