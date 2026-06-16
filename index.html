@@ -1097,21 +1097,19 @@ async function laadKansjesVanApi() {
     if (!resp.ok) throw new Error();
     const data = await resp.json();
     if (data.kansjes && data.kansjes.length > 0) {
-      // Voeg API kansjes toe bovenop demo kansjes
-      // In productie kun je KANSJES = [] maken en alleen API kansjes tonen
-      KANSJES.length = 0; // verwijder demokansjes
-data.kansjes.forEach(k => {
-  k._tid = k.id;
-  k.badges = k.badges || [k.land || 'Europa'];
-  k.oudePrijs = k.oude_prijs;
-  k.minNachten = k.min_nachten;
-  if (!extraKaartjes.find(x => String(x.id) === String(k.id))) {
-    extraKaartjes.unshift(k);
-  }
-});
+      KANSJES.length = 0;
+      extraKaartjes = [];
+      data.kansjes.forEach(k => {
+        k._tid = k.id;
+        k.badges = k.badges || [k.land || 'Europa'];
+        k.oudePrijs = k.oude_prijs;
+        k.minNachten = k.min_nachten;
+        extraKaartjes.push(k);
+      });
+      // Herlaad landen dropdown met echte data
+      vulLandenDropdowns();
     }
   } catch(e) {
-    // API niet beschikbaar — demo kansjes blijven zichtbaar
     console.log('Kansjes API niet bereikbaar, demo data getoond');
   }
   filterKansjes();
