@@ -707,7 +707,7 @@ function openDetail(id){
       <h3>Contact opnemen met de verhuurder</h3>
       <p>Stel een vraag of geef aan dat je wilt boeken — de verhuurder reageert snel.</p>
       <div class="contact-btns">
-        <button class="btn btn-secondary" onclick="toggleContactForm(${k.id||k._tid})" id="btn-form-${k.id||k._tid}">
+        <button class="btn btn-secondary" onclick="toggleContactForm('${k.id||k._tid}')" id="btn-form-${k.id||k._tid}">
           ✉️ Stuur een bericht
         </button>
         ${heeftWA?`<a class="btn btn-whatsapp" href="https://wa.me/${k.wa}?text=${encodeURIComponent('Hoi! Ik zag jullie kansje "'+k.titel+'" op Vakantiekansjes.nl en heb interesse. Kunnen we even contact?')}" target="_blank" rel="noopener">
@@ -729,7 +729,7 @@ function openDetail(id){
             <label>Jouw bericht *</label>
             <textarea id="cf-bericht-${k.id||k._tid}" placeholder="bijv. Ik heb interesse in jullie kansje voor de periode ${fmtNL(k.van)}–${fmtNL(k.tot)}. Hebben jullie ook kinderbedjes?" style="min-height:90px;width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:var(--sand);outline:none;resize:vertical;"></textarea>
           </div>
-          <button class="btn btn-secondary" id="cf-btn-${k.id||k._tid}" onclick="verstuurBericht(${k.id||k._tid},'${k.contact||''}','${k.titel.replace(/'/g,"\\'")}','${k.locatie}')" style="font-size:14px;padding:10px 20px;">Bericht versturen →</button>
+          <button class="btn btn-secondary" id="cf-btn-${k.id||k._tid}" onclick="verstuurBericht('${k.id||k._tid}','${k.contact||''}','${k.titel.replace(/'/g,"\\'")}','${k.locatie}')" style="font-size:14px;padding:10px 20px;">Bericht versturen →</button>
         </div>
       </div>
     </div>`;
