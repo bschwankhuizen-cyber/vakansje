@@ -163,6 +163,12 @@ tr:hover td { background: var(--gray-50); }
     <a class="nav-item" onclick="toonPagina('adverteerders', this)">
       <span class="nav-icon">👤</span><span>Adverteerders</span>
     </a>
+    <a class="nav-item" onclick="toonPagina('reacties', this)">
+      <span class="nav-icon">💬</span><span>Reacties</span>
+    </a>
+    <a class="nav-item" onclick="toonPagina('gasten', this)">
+      <span class="nav-icon">🧳</span><span>Gasten</span>
+    </a>
     <div class="sidebar-footer">
       <button class="logout-btn" onclick="logout()">← Uitloggen</button>
     </div>
@@ -266,6 +272,87 @@ tr:hover td { background: var(--gray-50); }
       </div>
     </div>
 
+    <!-- REACTIES PAGINA -->
+    <div class="page" id="page-reacties">
+      <div class="topbar">
+        <h1>Reacties per kansje</h1>
+        <span class="topbar-meta" id="reacties-meta"></span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Totaal reacties</div><div class="stat-value" id="r-stat-totaal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Berichten</div><div class="stat-value" id="r-stat-berichten" style="color:var(--navy)">—</div></div>
+        <div class="stat-card"><div class="stat-label">WhatsApp clicks</div><div class="stat-value" id="r-stat-wa" style="color:var(--green)">—</div></div>
+        <div class="stat-card"><div class="stat-label">Kansjes met reactie</div><div class="stat-value" id="r-stat-kansjes">—</div></div>
+      </div>
+      <h2 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1rem;">Per kansje</h2>
+      <div class="table-wrap" style="margin-bottom:2rem;">
+        <div class="tabel-loading" id="reacties-loading"><div class="spinner"></div><br>Reacties laden…</div>
+        <table id="reacties-tabel" style="display:none">
+          <thead><tr>
+            <th onclick="sorteerR('kansje_titel')">Kansje</th>
+            <th onclick="sorteerR('berichten')">Berichten</th>
+            <th onclick="sorteerR('whatsapp_clicks')">WhatsApp</th>
+            <th onclick="sorteerR('totaal')">Totaal</th>
+            <th onclick="sorteerR('laatste')">Laatste reactie</th>
+          </tr></thead>
+          <tbody id="reacties-tbody"></tbody>
+        </table>
+      </div>
+      <h2 style="font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1rem;">Alle berichten</h2>
+      <div class="toolbar">
+        <input type="text" id="zoek-berichten" placeholder="Zoek op naam, e-mail, kansje…" oninput="filterBerichten()">
+        <select id="filter-bericht-type" onchange="filterBerichten()">
+          <option value="">Alle types</option>
+          <option value="bericht">Berichten</option>
+          <option value="whatsapp">WhatsApp clicks</option>
+        </select>
+        <span class="toolbar-right" id="berichten-count"></span>
+      </div>
+      <div class="table-wrap">
+        <table id="berichten-tabel" style="display:none">
+          <thead><tr>
+            <th>Type</th>
+            <th>Kansje</th>
+            <th>Gast</th>
+            <th>Bericht</th>
+            <th>Datum</th>
+          </tr></thead>
+          <tbody id="berichten-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- GASTEN PAGINA -->
+    <div class="page" id="page-gasten">
+      <div class="topbar">
+        <h1>Gasten</h1>
+        <span class="topbar-meta" id="gasten-meta"></span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Totaal gasten</div><div class="stat-value" id="g-stat-totaal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Meerdere berichten</div><div class="stat-value" id="g-stat-meerdere" style="color:var(--coral)">—</div></div>
+        <div class="stat-card"><div class="stat-label">Gem. berichten</div><div class="stat-value" id="g-stat-gem">—</div></div>
+        <div class="stat-card"><div class="stat-label">Deze maand nieuw</div><div class="stat-value" id="g-stat-maand">—</div></div>
+      </div>
+      <div class="toolbar">
+        <input type="text" id="zoek-gasten" placeholder="Zoek op naam of e-mail…" oninput="filterGasten()">
+        <span class="toolbar-right" id="gasten-count"></span>
+      </div>
+      <div class="table-wrap">
+        <div class="tabel-loading" id="gasten-loading"><div class="spinner"></div><br>Gasten laden…</div>
+        <table id="gasten-tabel" style="display:none">
+          <thead><tr>
+            <th onclick="sorteerG('naam')">Naam</th>
+            <th onclick="sorteerG('email')">E-mail</th>
+            <th onclick="sorteerG('aantalBerichten')">Berichten</th>
+            <th>Kansjes</th>
+            <th onclick="sorteerG('aangemaakt_op')">Eerste contact</th>
+          </tr></thead>
+          <tbody id="gasten-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -331,28 +418,22 @@ let advEditId = null;
 const nu = new Date().toISOString().split('T')[0];
 
 // ── AUTH ──
-async function login() {
-  const pw = document.getElementById('login-pw').value.trim();
+function login() {
+  const pw = document.getElementById('login-pw').value;
   if (!pw) return;
-  try {
-    const r = await fetch('/api/admin-kansjes', {
-      method: 'GET',
-      headers: { 'Authorization': 'Bearer ' + pw }
+  token = pw;
+  // Test de token
+  fetch('/api/admin-kansjes', { headers: { Authorization: `Bearer ${pw}` } })
+    .then(r => {
+      if (r.status === 401) {
+        document.getElementById('login-error').style.display = 'block';
+        token = '';
+      } else {
+        document.getElementById('login-wrap').style.display = 'none';
+        document.getElementById('admin-wrap').style.display = 'flex';
+        r.json().then(data => verwerkKansjes(data.kansjes || []));
+      }
     });
-    if (r.status === 401) {
-      document.getElementById('login-error').style.display = 'block';
-      token = '';
-    } else {
-      token = pw;
-      const data = await r.json();
-      document.getElementById('login-wrap').style.display = 'none';
-      document.getElementById('admin-wrap').style.display = 'flex';
-      verwerkKansjes(data.kansjes || []);
-    }
-  } catch(e) {
-    document.getElementById('login-error').textContent = 'Verbindingsfout: ' + e.message;
-    document.getElementById('login-error').style.display = 'block';
-  }
 }
 
 function logout() {
@@ -662,6 +743,134 @@ function toonToast(tekst, type = '') {
   t.textContent = tekst;
   t.className = `toast ${type} show`;
   setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ── REACTIES & GASTEN ──
+let alleReactiesData = [];
+let allePerKansjeData = [];
+let alleGastenData = [];
+let sortKeyR = 'totaal'; let sortDirR = 'desc';
+let sortKeyG = 'aangemaakt_op'; let sortDirG = 'desc';
+
+async function laadReacties() {
+  document.getElementById('reacties-loading').style.display = 'block';
+  document.getElementById('reacties-tabel').style.display = 'none';
+  document.getElementById('berichten-tabel').style.display = 'none';
+  const r = await fetch('/api/admin-reacties', { headers: { Authorization: `Bearer ${token}` } });
+  const data = await r.json();
+  alleReactiesData = data.reacties || [];
+  allePerKansjeData = data.perKansje || [];
+  alleGastenData = data.gasten || [];
+
+  const berichten = alleReactiesData.filter(r => r.type === 'bericht').length;
+  const wa = alleReactiesData.filter(r => r.type === 'whatsapp').length;
+  document.getElementById('r-stat-totaal').textContent = alleReactiesData.length;
+  document.getElementById('r-stat-berichten').textContent = berichten;
+  document.getElementById('r-stat-wa').textContent = wa;
+  document.getElementById('r-stat-kansjes').textContent = allePerKansjeData.length;
+
+  document.getElementById('reacties-loading').style.display = 'none';
+  document.getElementById('reacties-tabel').style.display = '';
+  document.getElementById('berichten-tabel').style.display = '';
+  renderPerKansje();
+  filterBerichten();
+}
+
+function renderPerKansje() {
+  let lijst = [...allePerKansjeData].sort((a, b) => {
+    let va = a[sortKeyR] ?? '', vb = b[sortKeyR] ?? '';
+    const cmp = String(va).localeCompare(String(vb), 'nl', { numeric: true });
+    return sortDirR === 'asc' ? cmp : -cmp;
+  });
+  const tbody = document.getElementById('reacties-tbody');
+  tbody.innerHTML = lijst.map(k => `<tr>
+    <td style="font-weight:600;color:var(--navy)">${k.kansje_titel}</td>
+    <td><span class="badge badge-blauw">✉️ ${k.berichten}</span></td>
+    <td><span class="badge badge-groen">📱 ${k.whatsapp_clicks}</span></td>
+    <td><strong>${k.totaal}</strong></td>
+    <td style="font-size:12px;color:var(--gray-500)">${new Date(k.laatste).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})}</td>
+  </tr>`).join('');
+}
+
+function sorteerR(key) {
+  if (sortKeyR === key) sortDirR = sortDirR === 'asc' ? 'desc' : 'asc';
+  else { sortKeyR = key; sortDirR = 'desc'; }
+  renderPerKansje();
+}
+
+function filterBerichten() {
+  const zoek = document.getElementById('zoek-berichten').value.toLowerCase();
+  const type = document.getElementById('filter-bericht-type').value;
+  let lijst = alleReactiesData.filter(r => {
+    const matchZoek = !zoek || [r.gast_naam, r.gast_email, r.kansje_titel, r.bericht].some(v => v && v.toLowerCase().includes(zoek));
+    const matchType = !type || r.type === type;
+    return matchZoek && matchType;
+  });
+  document.getElementById('berichten-count').textContent = `${lijst.length} reacties`;
+  const tbody = document.getElementById('berichten-tbody');
+  tbody.innerHTML = lijst.map(r => `<tr>
+    <td>${r.type === 'bericht' ? '<span class="badge badge-blauw">✉️ Bericht</span>' : '<span class="badge badge-groen">📱 WhatsApp</span>'}</td>
+    <td style="font-size:13px;color:var(--navy);font-weight:500">${r.kansje_titel || '—'}</td>
+    <td>
+      <div style="font-weight:500">${r.gast_naam || '—'}</div>
+      ${r.gast_email ? `<div style="font-size:12px;color:var(--gray-500)">${r.gast_email}</div>` : ''}
+    </td>
+    <td style="font-size:13px;color:var(--gray-700);max-width:240px;">${r.bericht ? r.bericht.substring(0,100)+(r.bericht.length>100?'…':'') : '<span style="color:var(--gray-300)">—</span>'}</td>
+    <td style="font-size:12px;color:var(--gray-500);white-space:nowrap">${new Date(r.aangemaakt_op).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})}</td>
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-500)">Geen reacties gevonden</td></tr>';
+}
+
+// ── GASTEN ──
+async function laadGasten() {
+  if (alleGastenData.length === 0) await laadReacties();
+  document.getElementById('gasten-loading').style.display = 'none';
+  document.getElementById('gasten-tabel').style.display = '';
+  const maandGeleden = new Date(); maandGeleden.setMonth(maandGeleden.getMonth() - 1);
+  const nieuw = alleGastenData.filter(g => new Date(g.aangemaakt_op) > maandGeleden).length;
+  const meerdere = alleGastenData.filter(g => g.aantalBerichten > 1).length;
+  const gem = alleGastenData.length ? (alleGastenData.reduce((s,g) => s + g.aantalBerichten, 0) / alleGastenData.length).toFixed(1) : '0';
+  document.getElementById('g-stat-totaal').textContent = alleGastenData.length;
+  document.getElementById('g-stat-meerdere').textContent = meerdere;
+  document.getElementById('g-stat-gem').textContent = gem;
+  document.getElementById('g-stat-maand').textContent = nieuw;
+  filterGasten();
+}
+
+function filterGasten() {
+  const zoek = document.getElementById('zoek-gasten').value.toLowerCase();
+  let lijst = alleGastenData.filter(g => !zoek || [g.naam, g.email].some(v => v && v.toLowerCase().includes(zoek)));
+  lijst.sort((a, b) => {
+    let va = a[sortKeyG] ?? '', vb = b[sortKeyG] ?? '';
+    const cmp = String(va).localeCompare(String(vb), 'nl', { numeric: true });
+    return sortDirG === 'asc' ? cmp : -cmp;
+  });
+  document.getElementById('gasten-count').textContent = `${lijst.length} gasten`;
+  const tbody = document.getElementById('gasten-tbody');
+  tbody.innerHTML = lijst.map(g => `<tr>
+    <td style="font-weight:600">${g.naam}</td>
+    <td><a href="mailto:${g.email}" style="color:var(--navy);text-decoration:none">${g.email}</a></td>
+    <td><span class="badge ${g.aantalBerichten > 1 ? 'badge-blauw' : 'badge-grijs'}">${g.aantalBerichten}</span></td>
+    <td style="font-size:12px;color:var(--gray-500);max-width:200px">${g.kansjesTitels.slice(0,2).join(', ')}${g.kansjesTitels.length > 2 ? ` +${g.kansjesTitels.length-2}` : ''}</td>
+    <td style="font-size:12px;color:var(--gray-500)">${new Date(g.aangemaakt_op).toLocaleDateString('nl-NL',{day:'numeric',month:'short',year:'numeric'})}</td>
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--gray-500)">Geen gasten gevonden</td></tr>';
+}
+
+function sorteerG(key) {
+  if (sortKeyG === key) sortDirG = sortDirG === 'asc' ? 'desc' : 'asc';
+  else { sortKeyG = key; sortDirG = 'desc'; }
+  filterGasten();
+}
+
+// ── NAVIGATIE UITBREIDEN ──
+const origToonPagina = toonPagina;
+function toonPagina(pagina, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${pagina}`).classList.add('active');
+  el.classList.add('active');
+  if (pagina === 'adverteerders') laadAdverteerders();
+  if (pagina === 'reacties') laadReacties();
+  if (pagina === 'gasten') laadGasten();
 }
 
 // Enter op wachtwoord
