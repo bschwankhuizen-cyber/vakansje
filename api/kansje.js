@@ -57,6 +57,11 @@ export default async function handler(req, res) {
 
     if (dbError) throw new Error('Database fout: ' + dbError.message);
 
+    // Adverteerder opslaan of updaten (upsert op email)
+    await supabase
+      .from('adverteerders')
+      .upsert({ naam, email, telefoon: contact || null }, { onConflict: 'email', ignoreDuplicates: false });
+
     // Verificatielink
     const siteUrl = process.env.SITE_URL || 'https://vakantiekansjes.nl';
     const verifyUrl = `${siteUrl}/api/verify?token=${verifyToken}`;
