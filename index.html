@@ -103,7 +103,25 @@ nav { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border-bot
 .geen-resultaten h3 { font-family: 'Fraunces', serif; color: var(--navy); margin-bottom: 0.5rem; font-size: 1.3rem; }
 
 /* ── DETAIL MODAL ── */
-.detail-foto { width: 100%; height: 260px; object-fit: cover; border-radius: 12px; margin-bottom: 1.25rem; display: block; }
+.detail-foto { width: 100%; height: 260px; object-fit: cover; border-radius: 12px; display: block; }
+.galerij-wrap { margin-bottom: 1.25rem; }
+.galerij-hoofd { position: relative; border-radius: 12px; overflow: hidden; height: 280px; background: var(--gray-100); cursor: pointer; }
+.galerij-hoofd img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+.galerij-hoofd:hover img { transform: scale(1.02); }
+.galerij-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.12s; z-index: 2; }
+.galerij-nav:hover { background: white; }
+.galerij-nav-prev { left: 10px; }
+.galerij-nav-next { right: 10px; }
+.galerij-teller { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.55); color: white; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.galerij-thumbs { display: flex; gap: 6px; margin-top: 8px; }
+.galerij-thumb { flex: 1; height: 64px; border-radius: 7px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color 0.12s, opacity 0.12s; opacity: 0.65; }
+.galerij-thumb.actief { border-color: var(--coral); opacity: 1; }
+.galerij-thumb:hover { opacity: 1; }
+.galerij-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.galerij-lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 500; align-items: center; justify-content: center; }
+.galerij-lightbox.open { display: flex; }
+.galerij-lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 8px; }
+.galerij-lightbox-close { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .detail-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 6px; }
 .detail-titel { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: var(--navy); line-height: 1.25; }
 .detail-prijs { text-align: right; flex-shrink: 0; }
@@ -403,6 +421,14 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
   <p>© 2025 Vakantiekansjes.nl — Voor en door particulieren</p>
 </footer>
 
+<!-- ═══ LIGHTBOX ═══ -->
+<div class="galerij-lightbox" id="galerij-lightbox" onclick="sluitLightbox(event)">
+  <button class="galerij-lightbox-close" onclick="document.getElementById('galerij-lightbox').classList.remove('open')">✕</button>
+  <button class="galerij-nav" style="position:fixed;left:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);color:white;" onclick="lightboxNav(-1)">‹</button>
+  <img id="galerij-lightbox-img" src="" alt="">
+  <button class="galerij-nav" style="position:fixed;right:1rem;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.15);color:white;" onclick="lightboxNav(1)">›</button>
+</div>
+
 <!-- ═══ DETAIL MODAL ═══ -->
 <div class="modal-overlay" id="detail-overlay" onclick="sluitDetailBuiten(event)">
   <div class="modal" id="detail-box" style="max-width:640px;">
@@ -697,8 +723,27 @@ function openDetail(id){
     ? `<div style="font-size:13px;color:var(--gray-500);padding:8px 0;">📞 ${k.contact}</div>`
     : '';
 
+  // Bouw fotolijst: gebruik fotoUrls array indien beschikbaar
+  const fotos = (k.fotoUrls && k.fotoUrls.length > 0) ? k.fotoUrls : [foto];
+  const galerij = fotos.length > 1
+    ? `<div class="galerij-wrap" id="galerij-wrap">
+        <div class="galerij-hoofd" onclick="openLightbox(0)">
+          <img id="galerij-hoofd-img" src="${fotos[0]}" alt="${k.titel}">
+          ${fotos.length > 1 ? `<button class="galerij-nav galerij-nav-prev" onclick="event.stopPropagation();galerijNav(-1)">‹</button><button class="galerij-nav galerij-nav-next" onclick="event.stopPropagation();galerijNav(1)">›</button>` : ''}
+          <span class="galerij-teller" id="galerij-teller">1 / ${fotos.length}</span>
+        </div>
+        <div class="galerij-thumbs" id="galerij-thumbs">
+          ${fotos.map((url, i) => `<div class="galerij-thumb ${i===0?'actief':''}" onclick="galerijGoto(${i})"><img src="${url}" alt="Foto ${i+1}"></div>`).join('')}
+        </div>
+      </div>`
+    : `<img src="${fotos[0]}" alt="${k.titel}" class="detail-foto" style="margin-bottom:1.25rem;" onclick="openLightbox(0)" style="cursor:pointer;">`;
+
+  // Sla fotos op voor galerij navigatie
+  window._detailFotos = fotos;
+  window._detailFotoIdx = 0;
+
   document.getElementById('detail-content').innerHTML=`
-    <img src="${foto}" alt="${k.titel}" class="detail-foto">
+    ${galerij}
     <div class="detail-header">
       <div class="detail-titel">${k.titel}</div>
       <div class="detail-prijs">
@@ -818,6 +863,60 @@ async function verstuurBericht(id, contactEmail, titel, locatie){
 }
 
 function sluitDetail(){document.getElementById('detail-overlay').classList.remove('open');document.body.style.overflow='';}
+
+// ═══ GALERIJ NAVIGATIE ═══
+function galerijNav(dir) {
+  if (!window._detailFotos) return;
+  window._detailFotoIdx = (window._detailFotoIdx + dir + window._detailFotos.length) % window._detailFotos.length;
+  galerijToon(window._detailFotoIdx);
+}
+
+function galerijGoto(idx) {
+  window._detailFotoIdx = idx;
+  galerijToon(idx);
+}
+
+function galerijToon(idx) {
+  const img = document.getElementById('galerij-hoofd-img');
+  const teller = document.getElementById('galerij-teller');
+  const thumbs = document.querySelectorAll('.galerij-thumb');
+  if (img) img.src = window._detailFotos[idx];
+  if (teller) teller.textContent = (idx+1) + ' / ' + window._detailFotos.length;
+  thumbs.forEach((t, i) => t.classList.toggle('actief', i === idx));
+}
+
+function openLightbox(idx) {
+  window._detailFotoIdx = idx;
+  const lb = document.getElementById('galerij-lightbox');
+  const img = document.getElementById('galerij-lightbox-img');
+  if (!lb || !img || !window._detailFotos) return;
+  img.src = window._detailFotos[idx];
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function lightboxNav(dir) {
+  if (!window._detailFotos) return;
+  window._detailFotoIdx = (window._detailFotoIdx + dir + window._detailFotos.length) % window._detailFotos.length;
+  document.getElementById('galerij-lightbox-img').src = window._detailFotos[window._detailFotoIdx];
+}
+
+function sluitLightbox(e) {
+  if (e.target === document.getElementById('galerij-lightbox') || e.target === document.getElementById('galerij-lightbox-img')) {
+    document.getElementById('galerij-lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+
+// Keyboard navigatie voor galerij en lightbox
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('galerij-lightbox');
+  if (lb && lb.classList.contains('open')) {
+    if (e.key === 'ArrowLeft') lightboxNav(-1);
+    if (e.key === 'ArrowRight') lightboxNav(1);
+    if (e.key === 'Escape') { lb.classList.remove('open'); document.body.style.overflow = ''; }
+  }
+});
 function sluitDetailBuiten(e){if(e.target===document.getElementById('detail-overlay'))sluitDetail();}
 
 // ═══ PLAATSEN MODAL ═══
@@ -1041,6 +1140,7 @@ async function plaatsKansje(){
     tot:document.getElementById('f-tot').value,
     urgency:'Nieuw!',
     badges:[document.getElementById('f-land').value||'Europa'],
+    fotoUrls:(window._fotos||[]).filter(f=>f.url).map(f=>f.url),
     omschrijving:document.getElementById('f-omschrijving').value.trim(),
     contact:document.getElementById('f-contact').value.trim(),
     wa:waNr,
@@ -1065,6 +1165,7 @@ async function plaatsKansje(){
         contact: document.getElementById('f-contact').value.trim(),
         wa: waNr,
         foto_url: fotoUrl||null,
+        foto_urls: (window._fotos||[]).filter(f=>f.url).map(f=>f.url),
         urgency: 'Nieuw!',
       })
     });
@@ -1233,6 +1334,7 @@ async function laadKansjesVanApi() {
         k.badges = k.badges || [k.land || 'Europa'];
         k.oudePrijs = k.oude_prijs;
         k.minNachten = k.min_nachten;
+        k.fotoUrls = k.foto_urls || (k.foto_url ? [k.foto_url] : []);
         extraKaartjes.push(k);
       });
       vulLandenDropdowns();
