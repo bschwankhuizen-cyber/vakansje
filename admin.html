@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Vakantiekansjes.nl</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #25336C; --navy-light: #ECEEF8;
+  --coral: #E73F8C; --coral-light: #FDEEF6;
+  --teal: #1D9E75; --teal-light: #E4F7F1;
+  --sun: #F5A623; --sun-light: #FEF5E4;
+  --gray-50: #F8F9FA; --gray-100: #EAE8F0; --gray-300: #C4C0D4;
+  --gray-500: #7A768A; --gray-700: #3A3650; --text: #1A1828; --white: #fff;
+  --red: #DC2626; --red-light: #FEF2F2;
+  --green: #16A34A; --green-light: #F0FDF4;
+}
+body { font-family: 'Inter', sans-serif; background: var(--gray-50); color: var(--text); font-size: 14px; }
+
+/* LOGIN */
+.login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--navy); }
+.login-box { background: var(--white); border-radius: 16px; padding: 2.5rem 2rem; width: 100%; max-width: 380px; text-align: center; }
+.login-logo { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-500); margin-bottom: 1.5rem; }
+.login-box h1 { font-size: 1.5rem; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+.login-box p { font-size: 13px; color: var(--gray-500); margin-bottom: 1.75rem; }
+.login-box input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--gray-100); border-radius: 8px; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; margin-bottom: 12px; }
+.login-box input:focus { border-color: var(--navy); }
+.login-error { background: var(--red-light); color: var(--red); border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; display: none; }
+
+/* ADMIN LAYOUT */
+.admin-wrap { display: none; min-height: 100vh; }
+.sidebar { width: 220px; background: var(--navy); min-height: 100vh; position: fixed; top: 0; left: 0; padding: 1.5rem 0; }
+.sidebar-logo { padding: 0 1.25rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 1rem; }
+.sidebar-logo span { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+.sidebar-logo div { font-size: 16px; font-weight: 700; color: var(--white); margin-top: 2px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 1.25rem; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.65); cursor: pointer; border-left: 3px solid transparent; transition: all 0.12s; text-decoration: none; }
+.nav-item:hover { color: var(--white); background: rgba(255,255,255,0.06); }
+.nav-item.active { color: var(--white); border-left-color: var(--coral); background: rgba(255,255,255,0.08); }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-footer { position: absolute; bottom: 1.5rem; left: 0; right: 0; padding: 0 1.25rem; }
+.logout-btn { font-size: 13px; color: rgba(255,255,255,0.4); cursor: pointer; background: none; border: none; font-family: 'Inter', sans-serif; }
+.logout-btn:hover { color: rgba(255,255,255,0.7); }
+
+.main-content { margin-left: 220px; padding: 2rem; }
+
+/* TOPBAR */
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+.topbar h1 { font-size: 1.5rem; font-weight: 700; color: var(--navy); }
+.topbar-meta { font-size: 13px; color: var(--gray-500); }
+
+/* STATS */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: var(--white); border-radius: 12px; padding: 1.25rem; border: 1px solid var(--gray-100); }
+.stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-500); margin-bottom: 6px; }
+.stat-value { font-size: 2rem; font-weight: 700; color: var(--navy); line-height: 1; }
+.stat-sub { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+
+/* TABS */
+.page { display: none; }
+.page.active { display: block; }
+
+/* TOOLBAR */
+.toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; }
+.toolbar input[type=text] { padding: 8px 12px; border: 1.5px solid var(--gray-100); border-radius: 8px; font-size: 13px; font-family: 'Inter',sans-serif; outline: none; width: 240px; }
+.toolbar input:focus { border-color: var(--navy); }
+.toolbar select { padding: 8px 12px; border: 1.5px solid var(--gray-100); border-radius: 8px; font-size: 13px; font-family: 'Inter',sans-serif; outline: none; background: var(--white); cursor: pointer; }
+.toolbar-right { margin-left: auto; font-size: 13px; color: var(--gray-500); }
+
+/* TABLE */
+.table-wrap { background: var(--white); border-radius: 12px; border: 1px solid var(--gray-100); overflow: hidden; }
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--gray-50); }
+th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gray-500); border-bottom: 1px solid var(--gray-100); white-space: nowrap; cursor: pointer; user-select: none; }
+th:hover { color: var(--navy); }
+th.sort-asc::after { content: ' ↑'; }
+th.sort-desc::after { content: ' ↓'; }
+td { padding: 12px 14px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gray-50); }
+.td-titel { font-weight: 600; color: var(--navy); max-width: 200px; }
+.td-locatie { color: var(--gray-500); font-size: 13px; }
+
+/* BADGES */
+.badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px; white-space: nowrap; }
+.badge-groen { background: var(--green-light); color: var(--green); }
+.badge-grijs { background: var(--gray-100); color: var(--gray-500); }
+.badge-oranje { background: var(--sun-light); color: #7A5500; }
+.badge-rood { background: var(--red-light); color: var(--red); }
+.badge-blauw { background: var(--navy-light); color: var(--navy); }
+
+/* ACTIONS */
+.actions { display: flex; gap: 6px; }
+.btn-action { padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; font-family: 'Inter',sans-serif; transition: opacity 0.1s; }
+.btn-action:hover { opacity: 0.8; }
+.btn-edit { background: var(--navy-light); color: var(--navy); }
+.btn-toggle { background: var(--teal-light); color: var(--teal); }
+.btn-delete { background: var(--red-light); color: var(--red); }
+
+/* LOADING / EMPTY */
+.tabel-loading { text-align: center; padding: 3rem; color: var(--gray-500); }
+.spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid var(--gray-100); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; margin-bottom: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* MODAL */
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,18,30,0.5); z-index: 500; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--white); border-radius: 14px; padding: 1.75rem; max-width: 480px; width: 100%; }
+.modal h3 { font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
+.modal .fg { margin-bottom: 0.75rem; }
+.modal label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+.modal input, .modal select, .modal textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--gray-100); border-radius: 7px; font-size: 14px; font-family: 'Inter',sans-serif; outline: none; }
+.modal input:focus, .modal select:focus, .modal textarea:focus { border-color: var(--navy); }
+.modal textarea { min-height: 80px; resize: vertical; }
+.modal-btns { display: flex; gap: 8px; margin-top: 1.25rem; justify-content: flex-end; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 9px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; font-family: 'Inter',sans-serif; }
+.btn-primary { background: var(--navy); color: var(--white); }
+.btn-ghost { background: var(--gray-100); color: var(--gray-700); }
+.btn-danger { background: var(--red); color: var(--white); }
+.btn:hover { opacity: 0.88; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--navy); color: var(--white); padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; z-index: 999; transform: translateY(100px); opacity: 0; transition: all 0.25s; }
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: var(--teal); }
+.toast.error { background: var(--red); }
+
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .sidebar { width: 60px; }
+  .sidebar-logo div, .nav-item span, .sidebar-footer { display: none; }
+  .main-content { margin-left: 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <div class="login-logo">Vakantiekansjes.nl</div>
+    <h1>Beheeromgeving</h1>
+    <p>Log in om kansjes en adverteerders te beheren</p>
+    <div class="login-error" id="login-error">Ongeldig wachtwoord</div>
+    <input type="password" id="login-pw" placeholder="Wachtwoord" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="login()">Inloggen →</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-wrap" id="admin-wrap">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <span>Admin</span>
+      <div>Vakantiekansjes</div>
+    </div>
+    <a class="nav-item active" onclick="toonPagina('kansjes', this)">
+      <span class="nav-icon">🏡</span><span>Kansjes</span>
+    </a>
+    <a class="nav-item" onclick="toonPagina('adverteerders', this)">
+      <span class="nav-icon">👤</span><span>Adverteerders</span>
+    </a>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="logout()">← Uitloggen</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- KANSJES PAGINA -->
+    <div class="page active" id="page-kansjes">
+      <div class="topbar">
+        <h1>Kansjes</h1>
+        <span class="topbar-meta" id="kansjes-meta"></span>
+      </div>
+
+      <div class="stats-grid" id="kansjes-stats">
+        <div class="stat-card"><div class="stat-label">Totaal</div><div class="stat-value" id="stat-totaal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Live</div><div class="stat-value" id="stat-live" style="color:var(--teal)">—</div></div>
+        <div class="stat-card"><div class="stat-label">In afwachting</div><div class="stat-value" id="stat-wacht" style="color:var(--sun)">—</div></div>
+        <div class="stat-card"><div class="stat-label">Verlopen</div><div class="stat-value" id="stat-verlopen" style="color:var(--gray-500)">—</div></div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="zoek-kansjes" placeholder="Zoek op titel, locatie, naam…" oninput="filterTabel()">
+        <select id="filter-status" onchange="filterTabel()">
+          <option value="">Alle statussen</option>
+          <option value="live">Live</option>
+          <option value="wacht">In afwachting</option>
+          <option value="verlopen">Verlopen</option>
+        </select>
+        <select id="filter-land" onchange="filterTabel()">
+          <option value="">Alle landen</option>
+        </select>
+        <span class="toolbar-right" id="tabel-count"></span>
+      </div>
+
+      <div class="table-wrap">
+        <div class="tabel-loading" id="kansjes-loading">
+          <div class="spinner"></div><br>Kansjes laden…
+        </div>
+        <table id="kansjes-tabel" style="display:none">
+          <thead>
+            <tr>
+              <th onclick="sorteer('titel')">Titel</th>
+              <th onclick="sorteer('land')">Land</th>
+              <th onclick="sorteer('prijs')">Prijs</th>
+              <th onclick="sorteer('van')">Periode</th>
+              <th onclick="sorteer('verified')">Status</th>
+              <th onclick="sorteer('naam')">Verhuurder</th>
+              <th onclick="sorteer('aangemaakt_op')">Geplaatst</th>
+              <th>Acties</th>
+            </tr>
+          </thead>
+          <tbody id="kansjes-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADVERTEERDERS PAGINA -->
+    <div class="page" id="page-adverteerders">
+      <div class="topbar">
+        <h1>Adverteerders</h1>
+        <span class="topbar-meta" id="adv-meta"></span>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Totaal</div><div class="stat-value" id="adv-stat-totaal">—</div></div>
+        <div class="stat-card"><div class="stat-label">Actief kansje</div><div class="stat-value" id="adv-stat-actief" style="color:var(--teal)">—</div></div>
+        <div class="stat-card"><div class="stat-label">Alleen verlopen</div><div class="stat-value" id="adv-stat-verlopen" style="color:var(--gray-500)">—</div></div>
+        <div class="stat-card"><div class="stat-label">Gem. kansjes</div><div class="stat-value" id="adv-stat-gem">—</div></div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="zoek-adv" placeholder="Zoek op naam, e-mail, telefoon…" oninput="filterAdverteerders()">
+        <select id="filter-adv-status" onchange="filterAdverteerders()">
+          <option value="">Alle adverteerders</option>
+          <option value="actief">Met actief kansje</option>
+          <option value="inactief">Geen actief kansje</option>
+        </select>
+        <span class="toolbar-right" id="adv-count"></span>
+      </div>
+
+      <div class="table-wrap">
+        <div class="tabel-loading" id="adv-loading">
+          <div class="spinner"></div><br>Adverteerders laden…
+        </div>
+        <table id="adv-tabel" style="display:none">
+          <thead>
+            <tr>
+              <th onclick="sorteerAdv('naam')">Naam</th>
+              <th onclick="sorteerAdv('email')">E-mail</th>
+              <th onclick="sorteerAdv('telefoon')">Telefoon</th>
+              <th onclick="sorteerAdv('aantalKansjes')">Kansjes</th>
+              <th onclick="sorteerAdv('heeftActief')">Status</th>
+              <th onclick="sorteerAdv('aangemaakt_op')">Lid sinds</th>
+              <th>Acties</th>
+            </tr>
+          </thead>
+          <tbody id="adv-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <h3>Kansje verwijderen</h3>
+    <p style="color:var(--gray-500);font-size:14px;margin-bottom:1rem;">Weet je zeker dat je "<span id="delete-titel"></span>" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.</p>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="sluitModal('delete-modal')">Annuleren</button>
+      <button class="btn btn-danger" onclick="bevestigDelete()">Verwijderen</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT KANSJE MODAL -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal">
+    <h3>Kansje bewerken</h3>
+    <div class="fg"><label>Status</label>
+      <select id="edit-verified">
+        <option value="true">✓ Live (geverifieerd)</option>
+        <option value="false">⏳ In afwachting</option>
+      </select>
+    </div>
+    <div class="fg"><label>Urgency tekst</label>
+      <input type="text" id="edit-urgency" placeholder="bijv. Nog 3 dagen!">
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="sluitModal('edit-modal')">Annuleren</button>
+      <button class="btn btn-primary" onclick="slaEditOp()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT ADVERTEERDER MODAL -->
+<div class="modal-overlay" id="adv-edit-modal">
+  <div class="modal">
+    <h3>Adverteerder bewerken</h3>
+    <div class="fg"><label>Naam</label><input type="text" id="adv-edit-naam"></div>
+    <div class="fg"><label>Telefoon</label><input type="tel" id="adv-edit-telefoon" placeholder="06-12345678"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="sluitModal('adv-edit-modal')">Annuleren</button>
+      <button class="btn btn-primary" onclick="slaAdvEditOp()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+let token = '';
+let alleKansjesData = [];
+let alleAdverteerdersData = [];
+let sortKey = 'aangemaakt_op';
+let sortDir = 'desc';
+let sortKeyAdv = 'aangemaakt_op';
+let sortDirAdv = 'desc';
+let editId = null;
+let deleteId = null;
+let advEditId = null;
+const nu = new Date().toISOString().split('T')[0];
+
+// ── AUTH ──
+function login() {
+  const pw = document.getElementById('login-pw').value;
+  if (!pw) return;
+  token = pw;
+  // Test de token
+  fetch('/api/admin-kansjes', { headers: { Authorization: `Bearer ${pw}` } })
+    .then(r => {
+      if (r.status === 401) {
+        document.getElementById('login-error').style.display = 'block';
+        token = '';
+      } else {
+        document.getElementById('login-wrap').style.display = 'none';
+        document.getElementById('admin-wrap').style.display = 'flex';
+        r.json().then(data => verwerkKansjes(data.kansjes || []));
+      }
+    });
+}
+
+function logout() {
+  token = '';
+  document.getElementById('login-wrap').style.display = 'flex';
+  document.getElementById('admin-wrap').style.display = 'none';
+  document.getElementById('login-pw').value = '';
+}
+
+// ── NAVIGATIE ──
+function toonPagina(pagina, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`page-${pagina}`).classList.add('active');
+  el.classList.add('active');
+  if (pagina === 'adverteerders') laadAdverteerders();
+}
+
+// ── KANSJES LADEN ──
+function verwerkKansjes(kansjes) {
+  alleKansjesData = kansjes;
+  document.getElementById('kansjes-loading').style.display = 'none';
+  document.getElementById('kansjes-tabel').style.display = '';
+
+  // Stats
+  const live = kansjes.filter(k => k.verified && k.tot >= nu).length;
+  const wacht = kansjes.filter(k => !k.verified).length;
+  const verlopen = kansjes.filter(k => k.verified && k.tot < nu).length;
+  document.getElementById('stat-totaal').textContent = kansjes.length;
+  document.getElementById('stat-live').textContent = live;
+  document.getElementById('stat-wacht').textContent = wacht;
+  document.getElementById('stat-verlopen').textContent = verlopen;
+
+  // Landen filter vullen
+  const landen = [...new Set(kansjes.map(k => k.land).filter(Boolean))].sort();
+  const landSelect = document.getElementById('filter-land');
+  landen.forEach(l => {
+    const opt = document.createElement('option');
+    opt.value = l; opt.textContent = l;
+    landSelect.appendChild(opt);
+  });
+
+  filterTabel();
+}
+
+function filterTabel() {
+  const zoek = document.getElementById('zoek-kansjes').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  const land = document.getElementById('filter-land').value;
+
+  let lijst = alleKansjesData.filter(k => {
+    const matchZoek = !zoek || [k.titel, k.locatie, k.naam, k.email, k.land].some(v => v && v.toLowerCase().includes(zoek));
+    const matchLand = !land || k.land === land;
+    let matchStatus = true;
+    if (status === 'live') matchStatus = k.verified && k.tot >= nu;
+    if (status === 'wacht') matchStatus = !k.verified;
+    if (status === 'verlopen') matchStatus = k.verified && k.tot < nu;
+    return matchZoek && matchLand && matchStatus;
+  });
+
+  // Sorteren
+  lijst.sort((a, b) => {
+    let va = a[sortKey] ?? '', vb = b[sortKey] ?? '';
+    if (typeof va === 'boolean') { va = va ? 1 : 0; vb = vb ? 1 : 0; }
+    const cmp = String(va).localeCompare(String(vb), 'nl', { numeric: true });
+    return sortDir === 'asc' ? cmp : -cmp;
+  });
+
+  document.getElementById('tabel-count').textContent = `${lijst.length} kansjes`;
+  renderKansjesTabel(lijst);
+}
+
+function sorteer(key) {
+  if (sortKey === key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortKey = key; sortDir = 'asc'; }
+  document.querySelectorAll('#kansjes-tabel th').forEach(th => th.className = '');
+  event.target.className = `sort-${sortDir}`;
+  filterTabel();
+}
+
+function renderKansjesTabel(lijst) {
+  const tbody = document.getElementById('kansjes-tbody');
+  if (!lijst.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--gray-500);">Geen kansjes gevonden</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = lijst.map(k => {
+    const isLive = k.verified && k.tot >= nu;
+    const isVerlopen = k.verified && k.tot < nu;
+    const statusBadge = isLive
+      ? `<span class="badge badge-groen">✓ Live</span>`
+      : isVerlopen
+        ? `<span class="badge badge-grijs">Verlopen</span>`
+        : `<span class="badge badge-oranje">⏳ Wacht</span>`;
+    const datumGeplaatst = new Date(k.aangemaakt_op).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' });
+    const periode = `${fmtNL(k.van)} → ${fmtNL(k.tot)}`;
+    const korting = k.oude_prijs ? Math.round((1 - k.prijs / k.oude_prijs) * 100) : null;
+    return `<tr>
+      <td>
+        <div class="td-titel">${k.titel}</div>
+        <div class="td-locatie">${k.locatie}</div>
+      </td>
+      <td>${k.land || '—'}</td>
+      <td>
+        <strong style="color:var(--coral)">€${k.prijs}</strong>
+        ${korting ? `<span class="badge badge-rood" style="margin-left:4px;">-${korting}%</span>` : ''}
+      </td>
+      <td style="font-size:12px;white-space:nowrap;">${periode}</td>
+      <td>${statusBadge}</td>
+      <td>
+        <div style="font-weight:500">${k.naam || '—'}</div>
+        <div style="font-size:12px;color:var(--gray-500)">${k.email || ''}</div>
+      </td>
+      <td style="font-size:12px;color:var(--gray-500);white-space:nowrap">${datumGeplaatst}</td>
+      <td>
+        <div class="actions">
+          <button class="btn-action btn-edit" onclick="openEdit('${k.id}', ${k.verified}, '${(k.urgency||'').replace(/'/g,"\\'")}')">Bewerk</button>
+          <button class="btn-action btn-toggle" onclick="toggleVerified('${k.id}', ${k.verified})">${k.verified ? 'Offline' : 'Live'}</button>
+          <button class="btn-action btn-delete" onclick="openDelete('${k.id}', '${k.titel.replace(/'/g,"\\'")}')">Verwijder</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── KANSJE ACTIES ──
+function openEdit(id, verified, urgency) {
+  editId = id;
+  document.getElementById('edit-verified').value = String(verified);
+  document.getElementById('edit-urgency').value = urgency;
+  document.getElementById('edit-modal').classList.add('open');
+}
+
+async function slaEditOp() {
+  const verified = document.getElementById('edit-verified').value === 'true';
+  const r = await fetch('/api/admin-kansjes', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ id: editId, verified })
+  });
+  if (r.ok) {
+    sluitModal('edit-modal');
+    await herlaadKansjes();
+    toonToast('Kansje bijgewerkt', 'success');
+  } else {
+    toonToast('Fout bij opslaan', 'error');
+  }
+}
+
+function openDelete(id, titel) {
+  deleteId = id;
+  document.getElementById('delete-titel').textContent = titel;
+  document.getElementById('delete-modal').classList.add('open');
+}
+
+async function bevestigDelete() {
+  const r = await fetch('/api/admin-kansjes', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ id: deleteId })
+  });
+  if (r.ok) {
+    sluitModal('delete-modal');
+    await herlaadKansjes();
+    toonToast('Kansje verwijderd', 'success');
+  } else {
+    toonToast('Fout bij verwijderen', 'error');
+  }
+}
+
+async function toggleVerified(id, huidig) {
+  const r = await fetch('/api/admin-kansjes', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ id, verified: !huidig })
+  });
+  if (r.ok) {
+    await herlaadKansjes();
+    toonToast(huidig ? 'Kansje offline gezet' : 'Kansje live gezet', 'success');
+  }
+}
+
+async function herlaadKansjes() {
+  const r = await fetch('/api/admin-kansjes', { headers: { Authorization: `Bearer ${token}` } });
+  const data = await r.json();
+  verwerkKansjes(data.kansjes || []);
+}
+
+// ── ADVERTEERDERS ──
+async function laadAdverteerders() {
+  document.getElementById('adv-loading').style.display = 'block';
+  document.getElementById('adv-tabel').style.display = 'none';
+  const r = await fetch('/api/admin-adverteerders', { headers: { Authorization: `Bearer ${token}` } });
+  const data = await r.json();
+  alleAdverteerdersData = data.adverteerders || [];
+  document.getElementById('adv-loading').style.display = 'none';
+  document.getElementById('adv-tabel').style.display = '';
+
+  const actief = alleAdverteerdersData.filter(a => a.heeftActief).length;
+  const totaalKansjes = alleAdverteerdersData.reduce((s, a) => s + (a.aantalKansjes || 0), 0);
+  document.getElementById('adv-stat-totaal').textContent = alleAdverteerdersData.length;
+  document.getElementById('adv-stat-actief').textContent = actief;
+  document.getElementById('adv-stat-verlopen').textContent = alleAdverteerdersData.length - actief;
+  document.getElementById('adv-stat-gem').textContent = alleAdverteerdersData.length ? (totaalKansjes / alleAdverteerdersData.length).toFixed(1) : '0';
+
+  filterAdverteerders();
+}
+
+function filterAdverteerders() {
+  const zoek = document.getElementById('zoek-adv').value.toLowerCase();
+  const status = document.getElementById('filter-adv-status').value;
+
+  let lijst = alleAdverteerdersData.filter(a => {
+    const matchZoek = !zoek || [a.naam, a.email, a.telefoon].some(v => v && v.toLowerCase().includes(zoek));
+    const matchStatus = !status || (status === 'actief' ? a.heeftActief : !a.heeftActief);
+    return matchZoek && matchStatus;
+  });
+
+  lijst.sort((a, b) => {
+    let va = a[sortKeyAdv] ?? '', vb = b[sortKeyAdv] ?? '';
+    if (typeof va === 'boolean') { va = va ? 1 : 0; vb = vb ? 1 : 0; }
+    const cmp = String(va).localeCompare(String(vb), 'nl', { numeric: true });
+    return sortDirAdv === 'asc' ? cmp : -cmp;
+  });
+
+  document.getElementById('adv-count').textContent = `${lijst.length} adverteerders`;
+  renderAdvTabel(lijst);
+}
+
+function sorteerAdv(key) {
+  if (sortKeyAdv === key) sortDirAdv = sortDirAdv === 'asc' ? 'desc' : 'asc';
+  else { sortKeyAdv = key; sortDirAdv = 'asc'; }
+  filterAdverteerders();
+}
+
+function renderAdvTabel(lijst) {
+  const tbody = document.getElementById('adv-tbody');
+  if (!lijst.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gray-500);">Geen adverteerders gevonden</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = lijst.map(a => {
+    const datum = new Date(a.aangemaakt_op).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' });
+    const statusBadge = a.heeftActief
+      ? `<span class="badge badge-groen">✓ Actief kansje</span>`
+      : `<span class="badge badge-grijs">Geen actief kansje</span>`;
+    return `<tr>
+      <td style="font-weight:600">${a.naam || '—'}</td>
+      <td><a href="mailto:${a.email}" style="color:var(--navy);text-decoration:none;">${a.email}</a></td>
+      <td>${a.telefoon || '<span style="color:var(--gray-300)">—</span>'}</td>
+      <td>
+        <strong>${a.aantalKansjes || 0}</strong> totaal
+        ${a.actieveKansjes ? `<span class="badge badge-groen" style="margin-left:4px;">${a.actieveKansjes} actief</span>` : ''}
+      </td>
+      <td>${statusBadge}</td>
+      <td style="font-size:12px;color:var(--gray-500)">${datum}</td>
+      <td>
+        <div class="actions">
+          <button class="btn-action btn-edit" onclick="openAdvEdit('${a.id}','${(a.naam||'').replace(/'/g,"\\'")}','${(a.telefoon||'').replace(/'/g,"\\'")}')">Bewerk</button>
+          <a href="mailto:${a.email}" class="btn-action btn-toggle" style="text-decoration:none;">E-mail</a>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function openAdvEdit(id, naam, telefoon) {
+  advEditId = id;
+  document.getElementById('adv-edit-naam').value = naam;
+  document.getElementById('adv-edit-telefoon').value = telefoon;
+  document.getElementById('adv-edit-modal').classList.add('open');
+}
+
+async function slaAdvEditOp() {
+  const r = await fetch('/api/admin-adverteerders', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ id: advEditId, naam: document.getElementById('adv-edit-naam').value, telefoon: document.getElementById('adv-edit-telefoon').value })
+  });
+  if (r.ok) {
+    sluitModal('adv-edit-modal');
+    await laadAdverteerders();
+    toonToast('Adverteerder bijgewerkt', 'success');
+  } else {
+    toonToast('Fout bij opslaan', 'error');
+  }
+}
+
+// ── HELPERS ──
+function fmtNL(s) {
+  if (!s) return '';
+  const d = new Date(s);
+  const m = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  return `${d.getDate()} ${m[d.getMonth()]}`;
+}
+
+function sluitModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+function toonToast(tekst, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = tekst;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+// Enter op wachtwoord
+document.getElementById('login-pw').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
+</script>
+</body>
+</html>
