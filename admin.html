@@ -331,22 +331,28 @@ let advEditId = null;
 const nu = new Date().toISOString().split('T')[0];
 
 // ── AUTH ──
-function login() {
-  const pw = document.getElementById('login-pw').value;
+async function login() {
+  const pw = document.getElementById('login-pw').value.trim();
   if (!pw) return;
-  token = pw;
-  // Test de token
-  fetch('/api/admin-kansjes', { headers: { Authorization: `Bearer ${pw}` } })
-    .then(r => {
-      if (r.status === 401) {
-        document.getElementById('login-error').style.display = 'block';
-        token = '';
-      } else {
-        document.getElementById('login-wrap').style.display = 'none';
-        document.getElementById('admin-wrap').style.display = 'flex';
-        r.json().then(data => verwerkKansjes(data.kansjes || []));
-      }
+  try {
+    const r = await fetch('/api/admin-kansjes', {
+      method: 'GET',
+      headers: { 'Authorization': 'Bearer ' + pw }
     });
+    if (r.status === 401) {
+      document.getElementById('login-error').style.display = 'block';
+      token = '';
+    } else {
+      token = pw;
+      const data = await r.json();
+      document.getElementById('login-wrap').style.display = 'none';
+      document.getElementById('admin-wrap').style.display = 'flex';
+      verwerkKansjes(data.kansjes || []);
+    }
+  } catch(e) {
+    document.getElementById('login-error').textContent = 'Verbindingsfout: ' + e.message;
+    document.getElementById('login-error').style.display = 'block';
+  }
 }
 
 function logout() {
