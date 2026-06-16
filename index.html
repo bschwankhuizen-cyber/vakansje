@@ -642,7 +642,7 @@ function renderGrid(lijst){
     return;
   }
   grid.innerHTML=lijst.map(k=>`
-    <article class="kaartje" onclick="openDetail(${k.id||k._tid})">
+    <article class="kaartje" onclick="openDetail('${k.id||k._tid}')">
       <div class="kaartje-foto">
         <img src="${k.foto_url||k.foto||UNSPLASH[Math.abs(Array.from(String(k.id||k._tid)).reduce((a,c)=>a+c.charCodeAt(0),0))%UNSPLASH.length]}" alt="${k.titel}" loading="lazy">
         <span class="kaartje-urgency">${k.urgency}</span>
@@ -670,7 +670,7 @@ function toggleFav(btn){btn.textContent=btn.textContent==='🤍'?'❤️':'🤍'
 
 // ═══ DETAIL ═══
 function openDetail(id){
-  const k=alleKansjes().find(x=>(x.id||x._tid)===id);
+  const k=alleKansjes().find(x=>String(x.id||x._tid)===String(id));
   if(!k)return;
   const foto=k.foto_url||k.foto||UNSPLASH[Math.abs(Array.from(String(k.id||k._tid)).reduce((a,c)=>a+c.charCodeAt(0),0))%UNSPLASH.length];
   const heeftWA=!!k.wa;
@@ -707,7 +707,7 @@ function openDetail(id){
       <h3>Contact opnemen met de verhuurder</h3>
       <p>Stel een vraag of geef aan dat je wilt boeken — de verhuurder reageert snel.</p>
       <div class="contact-btns">
-        <button class="btn btn-secondary" onclick="toggleContactForm(${k.id||k._tid})" id="btn-form-${k.id||k._tid}">
+        <button class="btn btn-secondary" onclick="toggleContactForm('${k.id||k._tid}')" id="btn-form-${k.id||k._tid}">
           ✉️ Stuur een bericht
         </button>
         ${heeftWA?`<a class="btn btn-whatsapp" href="https://wa.me/${k.wa}?text=${encodeURIComponent('Hoi! Ik zag jullie kansje "'+k.titel+'" op Vakantiekansjes.nl en heb interesse. Kunnen we even contact?')}" target="_blank" rel="noopener" onclick="trackWaClick('${k.id||k._tid}','${k.titel.replace(/'/g,\"\\'\")}')">
@@ -729,7 +729,7 @@ function openDetail(id){
             <label>Jouw bericht *</label>
             <textarea id="cf-bericht-${k.id||k._tid}" placeholder="bijv. Ik heb interesse in jullie kansje voor de periode ${fmtNL(k.van)}–${fmtNL(k.tot)}. Hebben jullie ook kinderbedjes?" style="min-height:90px;width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:var(--sand);outline:none;resize:vertical;"></textarea>
           </div>
-          <button class="btn btn-secondary" id="cf-btn-${k.id||k._tid}" onclick="verstuurBericht(${k.id||k._tid},'${k.contact||''}','${k.titel.replace(/'/g,"\\'")}','${k.locatie}')" style="font-size:14px;padding:10px 20px;">Bericht versturen →</button>
+          <button class="btn btn-secondary" id="cf-btn-${k.id||k._tid}" onclick="verstuurBericht('${k.id||k._tid}','${k.contact||''}','${k.titel.replace(/'/g,"\\'")}','${k.locatie}')" style="font-size:14px;padding:10px 20px;">Bericht versturen →</button>
         </div>
       </div>
     </div>`;
@@ -1099,12 +1099,16 @@ async function laadKansjesVanApi() {
     if (data.kansjes && data.kansjes.length > 0) {
       // Voeg API kansjes toe bovenop demo kansjes
       // In productie kun je KANSJES = [] maken en alleen API kansjes tonen
-      data.kansjes.forEach(k => {
-        k._tid = k.id; // zorg dat openDetail werkt
-        if (!alleKansjes().find(x => x.id === k.id)) {
-          extraKaartjes.push(k);
-        }
-      });
+      KANSJES.length = 0; // verwijder demokansjes
+data.kansjes.forEach(k => {
+  k._tid = k.id;
+  k.badges = k.badges || [k.land || 'Europa'];
+  k.oudePrijs = k.oude_prijs;
+  k.minNachten = k.min_nachten;
+  if (!extraKaartjes.find(x => String(x.id) === String(k.id))) {
+    extraKaartjes.unshift(k);
+  }
+});
     }
   } catch(e) {
     // API niet beschikbaar — demo kansjes blijven zichtbaar
