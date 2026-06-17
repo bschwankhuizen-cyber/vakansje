@@ -104,9 +104,16 @@ tr:hover td { background: var(--gray-50); }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* MODAL */
-.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,18,30,0.5); z-index: 500; align-items: center; justify-content: center; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(10,18,30,0.5); z-index: 500; align-items: flex-start; justify-content: center; overflow-y: auto; padding: 1.5rem 1rem; }
 .modal-overlay.open { display: flex; }
-.modal { background: var(--white); border-radius: 14px; padding: 1.75rem; max-width: 480px; width: 100%; }
+.modal { background: var(--white); border-radius: 14px; padding: 1.75rem; max-width: 480px; width: 100%; margin: auto; }
+.edit-foto-item { position: relative; border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; background: var(--gray-100); border: 2px solid transparent; cursor: grab; }
+.edit-foto-item:hover { border-color: var(--navy); }
+.edit-foto-item.dragging { opacity: 0.4; cursor: grabbing; }
+.edit-foto-item.drag-over { border-color: var(--coral); border-style: dashed; }
+.edit-foto-item img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.edit-foto-item-nr { position: absolute; top: 4px; left: 4px; background: rgba(0,0,0,0.55); color: white; font-size: 10px; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.edit-foto-del { position: absolute; top: 4px; right: 4px; background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
 .modal h3 { font-size: 1.1rem; font-weight: 700; color: var(--navy); margin-bottom: 1rem; }
 .modal .fg { margin-bottom: 0.75rem; }
 .modal label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
@@ -435,6 +442,17 @@ tr:hover td { background: var(--gray-50); }
     <div class="fg"><label>Contactgegevens (zichtbaar op kansje)</label>
       <input type="text" id="edit-contact" placeholder="bijv. 06-12345678 of email@voorbeeld.nl">
     </div>
+
+    <div class="fg">
+      <label>Foto's <span style="font-weight:400;color:var(--gray-500);">(versleep om volgorde te wijzigen · min. 1 · max. 3)</span></label>
+      <div id="edit-foto-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;min-height:60px;"></div>
+      <div id="edit-foto-upload-box" onclick="document.getElementById('edit-foto-input').click()" style="border:2px dashed var(--gray-300);border-radius:8px;padding:0.9rem;text-align:center;cursor:pointer;font-size:13px;color:var(--gray-500);">
+        + Foto toevoegen
+      </div>
+      <input type="file" id="edit-foto-input" accept="image/*" multiple style="display:none" onchange="editFotoToevoegen(this)">
+      <div id="edit-foto-status" style="font-size:12px;margin-top:6px;color:var(--gray-500);"></div>
+    </div>
+
     <div class="modal-btns">
       <button class="btn btn-ghost" onclick="sluitModal('edit-modal')">Annuleren</button>
       <button class="btn btn-primary" onclick="slaEditOp()" id="edit-opslaan-btn">Opslaan</button>
@@ -622,6 +640,112 @@ function renderKansjesTabel(lijst) {
 }
 
 // ── KANSJE ACTIES ──
+// ── EDIT FOTO BEHEER ──
+let editFotos = []; // [{url, preview}]
+let editDragSrcIdx = null;
+
+function renderEditFotoGrid() {
+  const grid = document.getElementById('edit-foto-grid');
+  const uploadBox = document.getElementById('edit-foto-upload-box');
+  const statusEl = document.getElementById('edit-foto-status');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  editFotos.forEach((foto, idx) => {
+    const item = document.createElement('div');
+    item.className = 'edit-foto-item';
+    item.draggable = true;
+    item.dataset.idx = idx;
+    item.innerHTML = `
+      <img src="${foto.preview || foto.url}" alt="Foto ${idx+1}">
+      <div class="edit-foto-item-nr">${idx+1}</div>
+      <button class="edit-foto-del" onclick="editFotoVerwijder(${idx})" title="Verwijder">✕</button>`;
+
+    item.addEventListener('dragstart', e => {
+      editDragSrcIdx = idx;
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      document.querySelectorAll('.edit-foto-item').forEach(i => i.classList.remove('drag-over'));
+    });
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      if (editDragSrcIdx === null || editDragSrcIdx === idx) return;
+      const moved = editFotos.splice(editDragSrcIdx, 1)[0];
+      editFotos.splice(idx, 0, moved);
+      editDragSrcIdx = null;
+      renderEditFotoGrid();
+      if (statusEl) { statusEl.textContent = 'Volgorde aangepast — eerste foto is de hoofdfoto'; statusEl.style.color = 'var(--teal)'; }
+    });
+    grid.appendChild(item);
+  });
+
+  if (uploadBox) {
+    const vol = editFotos.length >= 3;
+    uploadBox.style.display = vol ? 'none' : 'block';
+  }
+}
+
+function editFotoVerwijder(idx) {
+  editFotos.splice(idx, 1);
+  renderEditFotoGrid();
+  const statusEl = document.getElementById('edit-foto-status');
+  if (statusEl) statusEl.textContent = editFotos.length + ' foto' + (editFotos.length !== 1 ? "'s" : '');
+}
+
+async function editFotoToevoegen(input) {
+  const ruimte = 3 - editFotos.length;
+  if (ruimte <= 0) return;
+  const files = Array.from(input.files).slice(0, ruimte);
+  const statusEl = document.getElementById('edit-foto-status');
+  if (statusEl) { statusEl.textContent = '⏳ Uploaden…'; statusEl.style.color = 'var(--gray-500)'; }
+
+  for (const file of files) {
+    try {
+      // Comprimeer
+      const previewUrl = await new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width, hh = img.height, max = 1200;
+            if (w > max || hh > max) {
+              if (w > hh) { hh = Math.round(hh * max / w); w = max; }
+              else { w = Math.round(w * max / hh); hh = max; }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = hh;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, hh);
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      const base64 = previewUrl.split(',')[1];
+      const resp = await fetch('/api/foto', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base64, bestandsnaam: file.name.replace(/\.[^.]+$/, '.jpg'), mimeType: 'image/jpeg' })
+      });
+      const data = await resp.json();
+      if (!resp.ok) throw new Error(data.error);
+      editFotos.push({ url: data.url, preview: previewUrl });
+      renderEditFotoGrid();
+    } catch(e) {
+      if (statusEl) { statusEl.textContent = '⚠️ Upload mislukt: ' + e.message; statusEl.style.color = 'var(--coral)'; }
+    }
+  }
+  if (statusEl) { statusEl.textContent = editFotos.length + ' foto' + (editFotos.length !== 1 ? "'s" : '') + ' — versleep om volgorde te wijzigen'; statusEl.style.color = 'var(--teal)'; }
+  input.value = '';
+}
+
 function openEdit(id) {
   const k = alleKansjesData.find(x => x.id === id);
   if (!k) return;
@@ -653,6 +777,16 @@ function openEdit(id) {
   }
   landSelect.value = k.land || '';
 
+  // Laad bestaande foto's
+  editFotos = [];
+  const bestaandeFotos = k.foto_urls && k.foto_urls.length > 0
+    ? k.foto_urls
+    : (k.foto_url ? [k.foto_url] : []);
+  bestaandeFotos.forEach(url => editFotos.push({ url, preview: null }));
+  renderEditFotoGrid();
+  const statusEl = document.getElementById('edit-foto-status');
+  if (statusEl) statusEl.textContent = editFotos.length + ' foto' + (editFotos.length !== 1 ? "'s" : '') + ' — versleep om volgorde te wijzigen';
+
   document.getElementById('edit-modal').classList.add('open');
 }
 
@@ -681,6 +815,8 @@ async function slaEditOp() {
   const updates = {
     id: editId,
     verified: document.getElementById('edit-verified').value === 'true',
+    foto_url: editFotos.length > 0 ? editFotos[0].url : null,
+    foto_urls: editFotos.map(f => f.url),
     urgency: document.getElementById('edit-urgency').value.trim(),
     titel: document.getElementById('edit-titel').value.trim(),
     type: document.getElementById('edit-type').value,
