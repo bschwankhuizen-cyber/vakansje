@@ -34,7 +34,8 @@ export default async function handler(req, res) {
   if (req.method === 'PUT') {
     const { id, verified, urgency, titel, type, land, locatie,
             personen, min_nachten, oude_prijs, prijs,
-            van, tot, omschrijving, contact } = req.body;
+            van, tot, omschrijving, contact,
+            foto_url, foto_urls } = req.body;
     if (!id) return res.status(400).json({ error: 'id verplicht' });
 
     // Bouw update object — sla alleen meegestuurde velden op
@@ -53,6 +54,8 @@ export default async function handler(req, res) {
     if (tot !== undefined) updates.tot = tot;
     if (omschrijving !== undefined) updates.omschrijving = omschrijving;
     if (contact !== undefined) updates.contact = contact;
+    if (foto_url !== undefined) updates.foto_url = foto_url;
+    if (foto_urls !== undefined) updates.foto_urls = foto_urls;
 
     const { error } = await supabase
       .from('kansjes')
