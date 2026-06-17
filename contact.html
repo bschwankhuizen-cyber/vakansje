@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Vakantiekansjes.nl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #26a3dc; --navy-light: #e6f4fb;
+  --coral: #e41e27; --coral-dark: #c01820;
+  --sand: #FAF8FF; --gray-100: #EAE8F0; --gray-300: #C4C0D4;
+  --gray-500: #7A768A; --gray-700: #3A3650; --text: #1A1828; --white: #fff;
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--sand); color: var(--text); font-size: 16px; line-height: 1.7; }
+nav { background: #26a3dc; border-bottom: 1px solid rgba(255,255,255,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 62px; position: sticky; top: 0; z-index: 100; }
+.nav-home { display: flex; align-items: center; text-decoration: none; }
+.nav-home img { display: block; }
+.nav-back { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+.nav-back:hover { color: white; }
+.hero { background: #26a3dc; padding: 3.5rem 2rem 4rem; text-align: center; position: relative; }
+.hero::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 48px; background: var(--sand); clip-path: ellipse(60% 100% at 50% 100%); }
+.hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--white); margin: 0; }
+.content { max-width: 780px; margin: 0 auto; padding: 3rem 2rem 5rem; }
+.content h2 { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: var(--navy); margin: 2.5rem 0 0.75rem; }
+.content h2:first-child { margin-top: 0; }
+.content p { color: var(--gray-700); margin-bottom: 1rem; }
+.content ul, .content ol { padding-left: 1.5rem; margin-bottom: 1rem; color: var(--gray-700); }
+.content li { margin-bottom: 0.4rem; }
+.content a { color: var(--navy); }
+.content strong { color: var(--text); }
+.content .intro { font-size: 1.1rem; color: var(--gray-500); margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid var(--gray-100); }
+footer { background: #26a3dc; color: rgba(255,255,255,0.5); text-align: center; font-size: 13px; padding: 2.5rem 2rem; }
+footer a { color: rgba(255,255,255,0.75); text-decoration: none; }
+footer a:hover { color: white; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="nav-home"><img src="https://necgpqhqtnmcxxlptchu.supabase.co/storage/v1/object/public/design/logo-vakantiekansjes.png" height="34" alt="Vakantiekansjes.nl"></a>
+  <a href="/" class="nav-back">← Terug naar de kansjes</a>
+</nav>
+<section class="hero">
+  <h1>Contact</h1>
+</section>
+<main class="content">
+
+<p class="intro">Heb je een vraag, opmerking of wil je iets melden? We horen graag van je.</p>
+
+<h2>Stuur ons een bericht</h2>
+<p>Vul het formulier hieronder in en we reageren zo snel mogelijk.</p>
+
+<form id="contact-form" style="margin-top:1.5rem;">
+  <div style="margin-bottom:1rem;">
+    <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:5px;">Naam *</label>
+    <input type="text" id="c-naam" placeholder="Jan de Vries" style="width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:white;outline:none;">
+  </div>
+  <div style="margin-bottom:1rem;">
+    <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:5px;">E-mailadres *</label>
+    <input type="email" id="c-email" placeholder="jij@voorbeeld.nl" style="width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:white;outline:none;">
+  </div>
+  <div style="margin-bottom:1rem;">
+    <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:5px;">Onderwerp *</label>
+    <select id="c-onderwerp" style="width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:white;outline:none;">
+      <option value="">Kies een onderwerp…</option>
+      <option>Vraag over een kansje</option>
+      <option>Probleem met plaatsen</option>
+      <option>Misbruik melden</option>
+      <option>Verzoek tot verwijdering gegevens</option>
+      <option>Samenwerking</option>
+      <option>Anders</option>
+    </select>
+  </div>
+  <div style="margin-bottom:1.5rem;">
+    <label style="display:block;font-size:13px;font-weight:600;color:var(--gray-700);margin-bottom:5px;">Bericht *</label>
+    <textarea id="c-bericht" rows="5" placeholder="Schrijf hier je bericht…" style="width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:white;outline:none;resize:vertical;"></textarea>
+  </div>
+  <div id="c-error" style="display:none;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:8px;padding:11px 14px;font-size:14px;color:#B91C1C;margin-bottom:1rem;"></div>
+  <div id="c-success" style="display:none;background:#E4F7F1;border:1px solid #1D9E75;border-radius:8px;padding:11px 14px;font-size:14px;color:#0F6E56;margin-bottom:1rem;"></div>
+  <button onclick="verstuurContact()" type="button" style="background:#e41e27;color:white;border:none;border-radius:10px;padding:13px 28px;font-size:15px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">Verstuur bericht →</button>
+</form>
+
+<script>
+async function verstuurContact() {{
+  const naam = document.getElementById('c-naam').value.trim();
+  const email = document.getElementById('c-email').value.trim();
+  const onderwerp = document.getElementById('c-onderwerp').value;
+  const bericht = document.getElementById('c-bericht').value.trim();
+  const errEl = document.getElementById('c-error');
+  const sucEl = document.getElementById('c-success');
+  errEl.style.display = 'none';
+  sucEl.style.display = 'none';
+
+  if (!naam) {{ errEl.textContent = 'Vul je naam in.'; errEl.style.display = 'block'; return; }}
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {{ errEl.textContent = 'Vul een geldig e-mailadres in.'; errEl.style.display = 'block'; return; }}
+  if (!onderwerp) {{ errEl.textContent = 'Kies een onderwerp.'; errEl.style.display = 'block'; return; }}
+  if (!bericht) {{ errEl.textContent = 'Schrijf een bericht.'; errEl.style.display = 'block'; return; }}
+
+  const btn = document.querySelector('button');
+  btn.textContent = '⏳ Versturen…'; btn.disabled = true;
+
+  try {{
+    const resp = await fetch('/api/contact', {{
+      method: 'POST',
+      headers: {{ 'Content-Type': 'application/json' }},
+      body: JSON.stringify({{ naam, email, onderwerp, bericht }})
+    }});
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    sucEl.textContent = '✓ Je bericht is verstuurd! We reageren zo snel mogelijk op ' + email + '.';
+    sucEl.style.display = 'block';
+    document.getElementById('contact-form').reset();
+  }} catch(e) {{
+    errEl.textContent = 'Er ging iets mis. Probeer het opnieuw of mail ons direct.';
+    errEl.style.display = 'block';
+  }} finally {{
+    btn.textContent = 'Verstuur bericht →'; btn.disabled = false;
+  }}
+}}
+</script>
+
+</main>
+<footer>
+  <p style="margin-bottom:8px;">
+    <a href="/over-ons.html">Over ons</a> ·
+    <a href="/spelregels.html">Spelregels</a> ·
+    <a href="/privacybeleid.html">Privacybeleid</a> ·
+    <a href="/contact.html">Contact</a>
+  </p>
+  <p>© 2025 Vakantiekansjes.nl — Voor en door particulieren</p>
+</footer>
+</body>
+</html>
