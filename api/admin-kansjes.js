@@ -30,14 +30,33 @@ export default async function handler(req, res) {
     return res.status(200).json({ kansjes: data });
   }
 
-  // PUT: kansje updaten (verified aan/uit)
+  // PUT: kansje updaten (alle velden)
   if (req.method === 'PUT') {
-    const { id, verified } = req.body;
+    const { id, verified, urgency, titel, type, land, locatie,
+            personen, min_nachten, oude_prijs, prijs,
+            van, tot, omschrijving, contact } = req.body;
     if (!id) return res.status(400).json({ error: 'id verplicht' });
+
+    // Bouw update object — sla alleen meegestuurde velden op
+    const updates = {};
+    if (verified !== undefined) updates.verified = verified;
+    if (urgency !== undefined) updates.urgency = urgency;
+    if (titel !== undefined) updates.titel = titel;
+    if (type !== undefined) updates.type = type;
+    if (land !== undefined) updates.land = land;
+    if (locatie !== undefined) updates.locatie = locatie;
+    if (personen !== undefined) updates.personen = personen;
+    if (min_nachten !== undefined) updates.min_nachten = min_nachten;
+    if (oude_prijs !== undefined) updates.oude_prijs = oude_prijs;
+    if (prijs !== undefined) updates.prijs = prijs;
+    if (van !== undefined) updates.van = van;
+    if (tot !== undefined) updates.tot = tot;
+    if (omschrijving !== undefined) updates.omschrijving = omschrijving;
+    if (contact !== undefined) updates.contact = contact;
 
     const { error } = await supabase
       .from('kansjes')
-      .update({ verified })
+      .update(updates)
       .eq('id', id);
 
     if (error) return res.status(500).json({ error: error.message });
