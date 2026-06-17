@@ -84,7 +84,7 @@ footer a:hover { color: white; }
 </form>
 
 <script>
-async function verstuurContact() {{
+async function verstuurContact() {
   const naam = document.getElementById('c-naam').value.trim();
   const email = document.getElementById('c-email').value.trim();
   const onderwerp = document.getElementById('c-onderwerp').value;
@@ -94,32 +94,32 @@ async function verstuurContact() {{
   errEl.style.display = 'none';
   sucEl.style.display = 'none';
 
-  if (!naam) {{ errEl.textContent = 'Vul je naam in.'; errEl.style.display = 'block'; return; }}
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {{ errEl.textContent = 'Vul een geldig e-mailadres in.'; errEl.style.display = 'block'; return; }}
-  if (!onderwerp) {{ errEl.textContent = 'Kies een onderwerp.'; errEl.style.display = 'block'; return; }}
-  if (!bericht) {{ errEl.textContent = 'Schrijf een bericht.'; errEl.style.display = 'block'; return; }}
+  if (!naam) { errEl.textContent = 'Vul je naam in.'; errEl.style.display = 'block'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Vul een geldig e-mailadres in.'; errEl.style.display = 'block'; return; }
+  if (!onderwerp) { errEl.textContent = 'Kies een onderwerp.'; errEl.style.display = 'block'; return; }
+  if (!bericht) { errEl.textContent = 'Schrijf een bericht.'; errEl.style.display = 'block'; return; }
 
   const btn = document.querySelector('button');
   btn.textContent = '⏳ Versturen…'; btn.disabled = true;
 
-  try {{
-    const resp = await fetch('/api/contact', {{
+  try {
+    const resp = await fetch('/api/contact', {
       method: 'POST',
-      headers: {{ 'Content-Type': 'application/json' }},
-      body: JSON.stringify({{ naam, email, onderwerp, bericht }})
-    }});
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ naam, email, onderwerp, bericht })
+    });
     const data = await resp.json();
     if (!resp.ok) throw new Error(data.error);
     sucEl.textContent = '✓ Je bericht is verstuurd! We reageren zo snel mogelijk op ' + email + '.';
     sucEl.style.display = 'block';
     document.getElementById('contact-form').reset();
-  }} catch(e) {{
+  } catch(e) {
     errEl.textContent = 'Er ging iets mis. Probeer het opnieuw of mail ons direct.';
     errEl.style.display = 'block';
-  }} finally {{
+  } finally {
     btn.textContent = 'Verstuur bericht →'; btn.disabled = false;
-  }}
-}}
+  }
+}
 </script>
 
 </main>
