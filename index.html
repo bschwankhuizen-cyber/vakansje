@@ -645,7 +645,7 @@ function heeftOverlap(k,van,tot){
   if(!van&&!tot)return true;
   const kv=new Date(k.van),kt=new Date(k.tot);
   const zv=van?new Date(van):null,zt=tot?new Date(tot):null;
-  if(zv&&zt)return kv<=zt&&kt>=zv;
+  if(zv&&zt)return kv<=zv&&kt>=zt;
   if(zv)return kt>=zv;
   if(zt)return kv<=zt;
   return true;
