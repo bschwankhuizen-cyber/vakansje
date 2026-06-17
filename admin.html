@@ -370,20 +370,74 @@ tr:hover td { background: var(--gray-50); }
 
 <!-- EDIT KANSJE MODAL -->
 <div class="modal-overlay" id="edit-modal">
-  <div class="modal">
+  <div class="modal" style="max-width:600px;">
     <h3>Kansje bewerken</h3>
-    <div class="fg"><label>Status</label>
-      <select id="edit-verified">
-        <option value="true">✓ Live (geverifieerd)</option>
-        <option value="false">⏳ In afwachting</option>
-      </select>
+    <div class="form-error" id="edit-error" style="margin-bottom:1rem;"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fg"><label>Status</label>
+        <select id="edit-verified">
+          <option value="true">✓ Live</option>
+          <option value="false">⏳ In afwachting</option>
+        </select>
+      </div>
+      <div class="fg"><label>Urgency tekst</label>
+        <input type="text" id="edit-urgency" placeholder="bijv. Nog 3 dagen!">
+      </div>
     </div>
-    <div class="fg"><label>Urgency tekst</label>
-      <input type="text" id="edit-urgency" placeholder="bijv. Nog 3 dagen!">
+
+    <div class="fg"><label>Titel</label>
+      <input type="text" id="edit-titel" placeholder="Naam van het verblijf">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fg"><label>Type</label>
+        <select id="edit-type">
+          <option>Vakantiewoning</option><option>Chalet</option><option>Appartement</option>
+          <option>Tiny house</option><option>Boerderij</option><option>Glamping / tent</option>
+          <option>Woonboot</option><option>Anders</option>
+        </select>
+      </div>
+      <div class="fg"><label>Land</label>
+        <select id="edit-land"></select>
+      </div>
+    </div>
+    <div class="fg"><label>Locatie</label>
+      <input type="text" id="edit-locatie" placeholder="bijv. Domburg, Zeeland">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+      <div class="fg"><label>Personen</label>
+        <input type="number" id="edit-personen" min="1" max="50">
+      </div>
+      <div class="fg"><label>Min. nachten</label>
+        <input type="number" id="edit-minnachten" min="1" max="30">
+      </div>
+      <div class="fg" style="display:none;"><label></label></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fg"><label>Normale prijs p/n (€)</label>
+        <input type="number" id="edit-oudeprijs" min="1">
+      </div>
+      <div class="fg"><label>Aanbiedingsprijs p/n (€)</label>
+        <input type="number" id="edit-prijs" min="1">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fg"><label>Beschikbaar vanaf</label>
+        <input type="date" id="edit-van">
+      </div>
+      <div class="fg"><label>Beschikbaar tot</label>
+        <input type="date" id="edit-tot">
+      </div>
+    </div>
+    <div class="fg"><label>Omschrijving</label>
+      <textarea id="edit-omschrijving" style="min-height:80px;resize:vertical;"></textarea>
+    </div>
+    <div class="fg"><label>Contactgegevens (zichtbaar op kansje)</label>
+      <input type="text" id="edit-contact" placeholder="bijv. 06-12345678 of email@voorbeeld.nl">
     </div>
     <div class="modal-btns">
       <button class="btn btn-ghost" onclick="sluitModal('edit-modal')">Annuleren</button>
-      <button class="btn btn-primary" onclick="slaEditOp()">Opslaan</button>
+      <button class="btn btn-primary" onclick="slaEditOp()" id="edit-opslaan-btn">Opslaan</button>
     </div>
   </div>
 </div>
@@ -405,6 +459,14 @@ tr:hover td { background: var(--gray-50); }
 <div class="toast" id="toast"></div>
 
 <script>
+const EU_LANDEN = [
+  'Nederland','België','Duitsland','Frankrijk','Spanje','Portugal','Italië',
+  'Oostenrijk','Zwitserland','Griekenland','Kroatië','Slovenië','Tsjechië',
+  'Polen','Hongarije','Denemarken','Noorwegen','Zweden','Finland','IJsland',
+  'Ierland','Schotland','Engeland','Wales','Luxemburg','Malta','Cyprus',
+  'Bulgarije','Roemenië','Albanië','Montenegro','Servië','Noord-Macedonië',
+  'Bosnië-Herzegovina','Slowakije','Letland','Litouwen','Estland','Moldavië',
+];
 let token = '';
 let alleKansjesData = [];
 let alleAdverteerdersData = [];
@@ -560,26 +622,96 @@ function renderKansjesTabel(lijst) {
 }
 
 // ── KANSJE ACTIES ──
-function openEdit(id, verified, urgency) {
+function openEdit(id) {
+  const k = alleKansjesData.find(x => x.id === id);
+  if (!k) return;
   editId = id;
-  document.getElementById('edit-verified').value = String(verified);
-  document.getElementById('edit-urgency').value = urgency;
+
+  document.getElementById('edit-error').style.display = 'none';
+  document.getElementById('edit-verified').value = String(k.verified);
+  document.getElementById('edit-urgency').value = k.urgency || '';
+  document.getElementById('edit-titel').value = k.titel || '';
+  document.getElementById('edit-type').value = k.type || 'Vakantiewoning';
+  document.getElementById('edit-locatie').value = k.locatie || '';
+  document.getElementById('edit-personen').value = k.personen || '';
+  document.getElementById('edit-minnachten').value = k.min_nachten || '';
+  document.getElementById('edit-oudeprijs').value = k.oude_prijs || '';
+  document.getElementById('edit-prijs').value = k.prijs || '';
+  document.getElementById('edit-van').value = k.van || '';
+  document.getElementById('edit-tot').value = k.tot || '';
+  document.getElementById('edit-omschrijving').value = k.omschrijving || '';
+  document.getElementById('edit-contact').value = k.contact || '';
+
+  // Land dropdown vullen als nog leeg
+  const landSelect = document.getElementById('edit-land');
+  if (landSelect.options.length <= 1) {
+    EU_LANDEN.forEach(l => {
+      const opt = document.createElement('option');
+      opt.value = l; opt.textContent = l;
+      landSelect.appendChild(opt);
+    });
+  }
+  landSelect.value = k.land || '';
+
   document.getElementById('edit-modal').classList.add('open');
 }
 
 async function slaEditOp() {
-  const verified = document.getElementById('edit-verified').value === 'true';
+  const errEl = document.getElementById('edit-error');
+  errEl.style.display = 'none';
+
+  const van = document.getElementById('edit-van').value;
+  const tot = document.getElementById('edit-tot').value;
+  const prijs = parseInt(document.getElementById('edit-prijs').value);
+  const oudeprijs = parseInt(document.getElementById('edit-oudeprijs').value);
+
+  if (!document.getElementById('edit-titel').value.trim()) {
+    errEl.textContent = 'Vul een titel in.'; errEl.style.display = 'block'; return;
+  }
+  if (van && tot && new Date(van) >= new Date(tot)) {
+    errEl.textContent = 'Vertrekdatum moet na aankomstdatum liggen.'; errEl.style.display = 'block'; return;
+  }
+  if (prijs && oudeprijs && prijs >= oudeprijs) {
+    errEl.textContent = 'Aanbiedingsprijs moet lager zijn dan de normale prijs.'; errEl.style.display = 'block'; return;
+  }
+
+  const btn = document.getElementById('edit-opslaan-btn');
+  btn.textContent = '⏳ Opslaan…'; btn.disabled = true;
+
+  const updates = {
+    id: editId,
+    verified: document.getElementById('edit-verified').value === 'true',
+    urgency: document.getElementById('edit-urgency').value.trim(),
+    titel: document.getElementById('edit-titel').value.trim(),
+    type: document.getElementById('edit-type').value,
+    land: document.getElementById('edit-land').value,
+    locatie: document.getElementById('edit-locatie').value.trim(),
+    personen: parseInt(document.getElementById('edit-personen').value) || null,
+    min_nachten: parseInt(document.getElementById('edit-minnachten').value) || null,
+    oude_prijs: oudeprijs || null,
+    prijs: prijs || null,
+    van: van || null,
+    tot: tot || null,
+    omschrijving: document.getElementById('edit-omschrijving').value.trim(),
+    contact: document.getElementById('edit-contact').value.trim(),
+  };
+
   const r = await fetch('/api/admin-kansjes', {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-    body: JSON.stringify({ id: editId, verified })
+    body: JSON.stringify(updates)
   });
+
+  btn.textContent = 'Opslaan'; btn.disabled = false;
+
   if (r.ok) {
     sluitModal('edit-modal');
     await herlaadKansjes();
     toonToast('Kansje bijgewerkt', 'success');
   } else {
-    toonToast('Fout bij opslaan', 'error');
+    const data = await r.json();
+    errEl.textContent = data.error || 'Fout bij opslaan.';
+    errEl.style.display = 'block';
   }
 }
 
