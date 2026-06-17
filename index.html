@@ -972,6 +972,32 @@ function fotoKlikUpload() {
   document.getElementById('foto-input').click();
 }
 
+async function comprimeerFoto(file, maxPx=1200, kwaliteit=0.85) {
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width, h = img.height;
+        if (w > maxPx || h > maxPx) {
+          if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+          else { w = Math.round(w * maxPx / h); h = maxPx; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const origMB = (file.size / 1024 / 1024).toFixed(1);
+        const result = canvas.toDataURL('image/jpeg', kwaliteit);
+        const nieuwKB = Math.round(result.length * 0.75 / 1024);
+        console.log(`Foto: ${origMB}MB → ${nieuwKB}KB (${w}×${h}px)`);
+        resolve(result);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 async function fotosBijgevoegd(input) {
   const bestaand = window._fotos.length;
   const ruimte = 3 - bestaand;
@@ -980,7 +1006,7 @@ async function fotosBijgevoegd(input) {
   if (!files.length) return;
 
   const statusEl = document.getElementById('foto-upload-status');
-  statusEl.textContent = '⏳ Foto\'s uploaden…';
+  statusEl.textContent = '⏳ Foto\'s verkleinen en uploaden…';
   statusEl.style.color = 'var(--gray-500)';
   statusEl.style.display = 'block';
 
@@ -991,16 +1017,13 @@ async function fotosBijgevoegd(input) {
     renderFotoGrid();
 
     try {
-      const previewUrl = await new Promise(r => {
-        const reader = new FileReader();
-        reader.onload = e => r(e.target.result);
-        reader.readAsDataURL(file);
-      });
+      // Comprimeer naar max 1200px / JPEG 85% voor upload
+      const previewUrl = await comprimeerFoto(file);
       const base64 = previewUrl.split(',')[1];
       const resp = await fetch('/api/foto', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ base64, bestandsnaam: file.name, mimeType: file.type })
+        body: JSON.stringify({ base64, bestandsnaam: file.name.replace(/\.[^.]+$/, '.jpg'), mimeType: 'image/jpeg' })
       });
       const data = await resp.json();
       if (!resp.ok) throw new Error(data.error);
