@@ -802,7 +802,7 @@ function openDetail(id){
   if(heeftWA){
     const waEl=document.getElementById('wa-btn-'+kid);
     if(waEl){
-      const msg=encodeURIComponent('Hoi! Ik zag het kansje '+k.titel+' op Vakantiekansjes.nl en heb interesse. Kunnen we even contact?');
+      const msg=encodeURIComponent('Hallo! Ik zag het kansje '+k.titel+' op Vakantiekansjes.nl en heb interesse. Kunnen we even contact hebben?');
       waEl.href='https://wa.me/'+k.wa+'?text='+msg;
       waEl.addEventListener('click',()=>trackWaClick(String(kid),k.titel));
     }
