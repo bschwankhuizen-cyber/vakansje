@@ -64,6 +64,12 @@ nav { background: #26a3dc; backdrop-filter: blur(8px); border-bottom: 1px solid 
 .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2.4rem, 5.5vw, 4rem); word-wrap: break-word; font-weight: 700; color: var(--white); line-height: 1.1; max-width: 720px; margin: 0 auto 1.2rem; }
 .hero h1 em { font-style: italic; color: #FFD580; font-weight: 300; }
 .hero-sub { font-size: 17px; color: rgba(255,255,255,0.95); max-width: 480px; margin: 0 auto 2.4rem; }
+.hero-sub span {padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 90%;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: solid 2px #ffffffdb;}
 .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
 /* ── ZOEKBALK ── */
@@ -314,7 +320,7 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
   <div class="hero-bg"></div>
   <div class="hero-content">
     <h1>Last minutes van particuliere verhuurders</h1>
-    <p class="hero-sub">Verhuurders plaatsen <span>gratis</span> hun lege weken.</p>
+    <p class="hero-sub">Verhuurders <span>plaatsen gratis</span> hun lege weken.</p>
     <div class="hero-btns">
       <a href="#kansjes" class="btn btn-primary btn-lg">Bekijk de kansjes ↓</a>
       <a href="#" class="btn btn-lg" style="background:rgba(255,255,255,0.15);color:#fff;border:1.5px solid rgba(255,255,255,0.3);" onclick="openPlaatsenModal(); return false;">Kansje plaatsen</a>
