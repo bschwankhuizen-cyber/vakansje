@@ -33,6 +33,19 @@ nav { background: #26a3dc; border-bottom: 1px solid rgba(255,255,255,0.2); paddi
 .nav-home img { display: block; }
 .nav-back { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); text-decoration: none; display: flex; align-items: center; gap: 6px; }
 .nav-back:hover { color: white; }
+.nav-links { display: flex; align-items: center; gap: 1.8rem; }
+.nav-links a { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); text-decoration: none; }
+.nav-links a:hover { color: white; }
+.hamburger { display: none; flex-direction: column; justify-content: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; width: 32px; height: 32px; }
+.hamburger span { width: 22px; height: 2px; background: white; display: block; border-radius: 2px; }
+.mobile-menu { display: none; flex-direction: column; position: absolute; top: 62px; left: 0; right: 0; background: #1e8cc2; padding: 0.5rem 2rem 1rem; z-index: 99; box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
+.mobile-menu.open { display: flex; }
+.mobile-menu a { color: rgba(255,255,255,0.9); text-decoration: none; font-size: 15px; font-weight: 600; padding: 0.8rem 0; border-top: 1px solid rgba(255,255,255,0.15); }
+.mobile-menu a:first-child { border-top: none; }
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+}
 .hero { background: #26a3dc; padding: 3.5rem 2rem 4rem; text-align: center; position: relative; }
 .hero::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 48px; background: var(--sand); clip-path: ellipse(60% 100% at 50% 100%); }
 .hero h1 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--white); margin: 0; }
@@ -53,8 +66,24 @@ footer a:hover { color: white; }
 <body>
 <nav>
   <a href="/" class="nav-home"><img src="https://necgpqhqtnmcxxlptchu.supabase.co/storage/v1/object/public/design/logo-vakantiekansjes.png" height="34" alt="Vakantiekansjes.nl"></a>
-  <a href="/" class="nav-back">← Terug naar de kansjes</a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/spelregels.html">Spelregels</a>
+    <a href="/over-ons.html">Over ons</a>
+    <a href="/privacybeleid.html">Privacy</a>
+    <a href="/contact.html">Contact</a>
+  </div>
+  <button class="hamburger" onclick="document.getElementById('mobileMenu').classList.toggle('open')" aria-label="Menu openen">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/">Home</a>
+  <a href="/spelregels.html">Spelregels</a>
+  <a href="/over-ons.html">Over ons</a>
+  <a href="/privacybeleid.html">Privacy</a>
+  <a href="/contact.html">Contact</a>
+</div>
 <section class="hero">
   <h1>Privacybeleid</h1>
 </section>
