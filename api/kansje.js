@@ -99,6 +99,31 @@ Warm, informeel, max 10 regels. Geen AI-jargon.`
       text: mailTekst,
     });
 
+    // Beheerdersmelding — apart, faalt de hoofdflow niet als dit misgaat
+    try {
+      const adminEmail = process.env.ADMIN_EMAIL;
+      if (adminEmail) {
+        await resend.emails.send({
+          from: 'Vakantiekansjes.nl <noreply@vakantiekansjes.nl>',
+          to: adminEmail,
+          subject: `Nieuw kansje geplaatst: ${titel}`,
+          text: `Er is een nieuw kansje geplaatst (nog niet geverifieerd).
+
+Titel: ${titel}
+Locatie: ${locatie}, ${land}
+Periode: ${van} t/m ${tot}
+Prijs: €${prijs}${oude_prijs ? ` (was €${oude_prijs})` : ''}
+Verhuurder: ${naam} (${email})
+Contact: ${contact || '-'}
+
+Kansje ID: ${kansje.id}
+Verify token: ${verifyToken}`,
+        });
+      }
+    } catch (adminMailErr) {
+      console.error('Beheerdersmail mislukt:', adminMailErr);
+    }
+
     return res.status(200).json({
       ok: true,
       mailTekst,
