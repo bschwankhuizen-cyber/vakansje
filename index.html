@@ -38,6 +38,11 @@ nav { background: #26a3dc; backdrop-filter: blur(8px); border-bottom: 1px solid 
 .logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--navy); text-decoration: none; }
 .logo span { color: var(--coral); }
 .nav-actions { display: flex; gap: 10px; align-items: center; }
+.hamburger-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; flex-direction: column; gap: 5px; width: 36px; height: 36px; align-items: center; justify-content: center; }
+.hamburger-btn span { display: block; width: 22px; height: 2.5px; background: white; border-radius: 2px; transition: transform 0.2s, opacity 0.2s; }
+.hamburger-btn.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+.hamburger-btn.open span:nth-child(2) { opacity: 0; }
+.hamburger-btn.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
 
 /* ── BUTTONS ── */
 .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; transition: transform 0.12s, background 0.12s, box-shadow 0.12s; font-family: 'Inter', sans-serif; }
@@ -265,8 +270,10 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
   .modal { padding: 1.6rem 1.1rem; }
   .detail-meta { grid-template-columns: 1fr 1fr; }
   .contact-btns { flex-direction: column; }
-  .nav-actions {display:none;}
-  nav {justify-content: center;}
+  .hamburger-btn { display: flex !important; }
+  .nav-actions { position: fixed; top: 62px; left: 0; right: 0; background: var(--white); flex-direction: column; align-items: stretch; gap: 0; padding: 0; max-height: 0; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.1); transition: max-height 0.25s ease; z-index: 199; }
+  .nav-actions.open { max-height: 320px; padding: 0.75rem; gap: 8px; }
+  .nav-actions a, .nav-actions .btn { width: 100%; justify-content: center; text-align: center; }
 }
 
 /* ── DATUM WRAPPER (volledig klikbaar) ── */
@@ -310,10 +317,14 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
 
 <nav>
   <a href="#" class="logo-link" style="display:flex;align-items:center;text-decoration:none;"><img src="https://necgpqhqtnmcxxlptchu.supabase.co/storage/v1/object/public/design/logo-vakantiekansjes.png" height="34" alt="Vakantiekansjes.nl" style="display:block;"></a>
-  <div class="nav-actions">
-    <a href="#zoek-kansje" class="btn btn-ghost" style="font-size:13px;padding:8px 14px;">Kansje zoeken</a>
-    <a href="#" class="btn btn-primary" style="font-size:13px;padding:8px 16px;" onclick="openPlaatsenModal(); return false;">+ Kansje plaatsen</a>
+  <div class="nav-actions" id="nav-actions">
+    <a href="#zoek-kansje" class="btn btn-ghost" style="font-size:13px;padding:8px 14px;" onclick="sluitMobielMenu()">Kansje zoeken</a>
+    <a href="#" class="btn btn-primary" style="font-size:13px;padding:8px 16px;" onclick="sluitMobielMenu();openPlaatsenModal(); return false;">+ Kansje plaatsen</a>
+    <a href="/spelregels.html" class="btn btn-ghost" style="font-size:13px;padding:8px 14px;">Spelregels</a>
   </div>
+  <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobielMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <section class="hero">
@@ -604,6 +615,15 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
 </div>
 
 <script>
+
+function toggleMobielMenu() {
+  document.getElementById('nav-actions').classList.toggle('open');
+  document.getElementById('hamburger-btn').classList.toggle('open');
+}
+function sluitMobielMenu() {
+  document.getElementById('nav-actions').classList.remove('open');
+  document.getElementById('hamburger-btn').classList.remove('open');
+}
 
 const EU_LANDEN = [
   'Nederland','België','Duitsland','Frankrijk','Spanje','Portugal','Italië',
