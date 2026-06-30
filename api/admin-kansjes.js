@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   if (req.method === 'GET') {
     const { data, error } = await supabase
       .from('kansjes')
-      .select('id, titel, locatie, land, prijs, oude_prijs, van, tot, verified, naam, email, aangemaakt_op, urgency, type, personen, min_nachten, foto_url')
+      .select('id, titel, locatie, land, prijs, oude_prijs, van, tot, verified, naam, email, aangemaakt_op, urgency, type, personen, min_nachten, foto_url, foto_urls, contact, wa, omschrijving')
       .order('aangemaakt_op', { ascending: false });
 
     if (error) return res.status(500).json({ error: error.message });
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
   if (req.method === 'PUT') {
     const { id, verified, urgency, titel, type, land, locatie,
             personen, min_nachten, oude_prijs, prijs,
-            van, tot, omschrijving, contact,
+            van, tot, omschrijving, contact, wa,
             foto_url, foto_urls } = req.body;
     if (!id) return res.status(400).json({ error: 'id verplicht' });
 
@@ -54,6 +54,7 @@ export default async function handler(req, res) {
     if (tot !== undefined) updates.tot = tot;
     if (omschrijving !== undefined) updates.omschrijving = omschrijving;
     if (contact !== undefined) updates.contact = contact;
+    if (wa !== undefined) updates.wa = wa;
     if (foto_url !== undefined) updates.foto_url = foto_url;
     if (foto_urls !== undefined) updates.foto_urls = foto_urls;
 
