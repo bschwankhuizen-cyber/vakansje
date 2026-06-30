@@ -443,7 +443,10 @@ tr:hover td { background: var(--gray-50); }
       <input type="text" id="edit-contact" placeholder="bijv. 06-12345678 of email@voorbeeld.nl">
     </div>
     <div class="fg"><label>WhatsApp nummer</label>
-      <input type="text" id="edit-wa" placeholder="bijv. 0612345678 (laat leeg voor geen WhatsApp knop)">
+      <div style="display:grid;grid-template-columns:160px 1fr;gap:8px;">
+        <select id="edit-wa-land" style="padding:10px 8px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:13px;font-family:Inter,sans-serif;background:white;outline:none;"></select>
+        <input type="text" id="edit-wa-nr" placeholder="bijv. 612345678 (leeg = geen WhatsApp)">
+      </div>
     </div>
 
     <div class="fg">
@@ -488,6 +491,77 @@ const EU_LANDEN = [
   'Bulgarije','Roemenië','Albanië','Montenegro','Servië','Noord-Macedonië',
   'Bosnië-Herzegovina','Slowakije','Letland','Litouwen','Estland','Moldavië',
 ];
+
+const LANDCODES = [
+  { land: 'Nederland', code: '31' },
+  { land: 'België', code: '32' },
+  { land: 'Duitsland', code: '49' },
+  { land: 'Frankrijk', code: '33' },
+  { land: 'Spanje', code: '34' },
+  { land: 'Portugal', code: '351' },
+  { land: 'Italië', code: '39' },
+  { land: 'Oostenrijk', code: '43' },
+  { land: 'Zwitserland', code: '41' },
+  { land: 'Griekenland', code: '30' },
+  { land: 'Kroatië', code: '385' },
+  { land: 'Slovenië', code: '386' },
+  { land: 'Tsjechië', code: '420' },
+  { land: 'Polen', code: '48' },
+  { land: 'Hongarije', code: '36' },
+  { land: 'Denemarken', code: '45' },
+  { land: 'Noorwegen', code: '47' },
+  { land: 'Zweden', code: '46' },
+  { land: 'Finland', code: '358' },
+  { land: 'IJsland', code: '354' },
+  { land: 'Ierland', code: '353' },
+  { land: 'Verenigd Koninkrijk', code: '44' },
+  { land: 'Luxemburg', code: '352' },
+  { land: 'Malta', code: '356' },
+  { land: 'Cyprus', code: '357' },
+  { land: 'Bulgarije', code: '359' },
+  { land: 'Roemenië', code: '40' },
+  { land: 'Albanië', code: '355' },
+  { land: 'Montenegro', code: '382' },
+  { land: 'Servië', code: '381' },
+  { land: 'Noord-Macedonië', code: '389' },
+  { land: 'Bosnië-Herzegovina', code: '387' },
+  { land: 'Slowakije', code: '421' },
+  { land: 'Letland', code: '371' },
+  { land: 'Litouwen', code: '370' },
+  { land: 'Estland', code: '372' },
+  { land: 'Moldavië', code: '373' },
+];
+
+function vulWaLandDropdown() {
+  const sel = document.getElementById('edit-wa-land');
+  if (!sel || sel.options.length > 0) return;
+  LANDCODES.forEach(({ land, code }) => {
+    const opt = document.createElement('option');
+    opt.value = code;
+    opt.textContent = `${land} (+${code})`;
+    sel.appendChild(opt);
+  });
+}
+
+function splitsWaNummer(wa) {
+  // Probeer het bestaande wa nummer te splitsen in landcode + lokaal nummer
+  if (!wa) return { code: '31', lokaal: '' };
+  const gesorteerd = [...LANDCODES].sort((a, b) => b.code.length - a.code.length);
+  for (const { code } of gesorteerd) {
+    if (wa.startsWith(code)) {
+      return { code, lokaal: wa.slice(code.length) };
+    }
+  }
+  return { code: '31', lokaal: wa };
+}
+
+function normaliseerWaNummer(landcode, lokaalNummer) {
+  let nr = (lokaalNummer || '').replace(/\D/g, '');
+  if (!nr) return '';
+  if (nr.startsWith('0')) nr = nr.slice(1);
+  return landcode + nr;
+}
+
 let token = '';
 let alleKansjesData = [];
 let alleAdverteerdersData = [];
@@ -768,7 +842,10 @@ function openEdit(id) {
   document.getElementById('edit-tot').value = k.tot || '';
   document.getElementById('edit-omschrijving').value = k.omschrijving || '';
   document.getElementById('edit-contact').value = k.contact || '';
-  document.getElementById('edit-wa').value = k.wa || '';
+  vulWaLandDropdown();
+  const { code: waCode, lokaal: waLokaal } = splitsWaNummer(k.wa);
+  document.getElementById('edit-wa-land').value = waCode;
+  document.getElementById('edit-wa-nr').value = waLokaal;
 
   // Land dropdown vullen als nog leeg
   const landSelect = document.getElementById('edit-land');
@@ -834,7 +911,7 @@ async function slaEditOp() {
     tot: tot || null,
     omschrijving: document.getElementById('edit-omschrijving').value.trim(),
     contact: document.getElementById('edit-contact').value.trim(),
-    wa: document.getElementById('edit-wa').value.replace(/^0/,'31').replace(/\D/g,''),
+    wa: normaliseerWaNummer(document.getElementById('edit-wa-land').value, document.getElementById('edit-wa-nr').value),
   };
 
   const r = await fetch('/api/admin-kansjes', {

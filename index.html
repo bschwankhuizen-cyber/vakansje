@@ -545,8 +545,11 @@ footer a { color: rgba(255,255,255,0.7); text-decoration: none; }
             <span class="wa-toggle-label">WhatsApp-knop tonen op mijn kansje</span>
           </label>
           <div id="wa-nr-wrap" style="display:none;margin-top:10px;">
-            <input type="tel" id="f-wa-nr" placeholder="bijv. 0612345678" style="width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:var(--white);outline:none;">
-            <p class="fg-hint">Huurders kunnen je dan direct via WhatsApp bereiken.</p>
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;">
+              <select id="f-wa-land" style="padding:10px 8px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:14px;font-family:Inter,sans-serif;background:var(--white);outline:none;"></select>
+              <input type="tel" id="f-wa-nr" placeholder="bijv. 612345678" style="width:100%;padding:10px 13px;border:1.5px solid var(--gray-100);border-radius:8px;font-size:15px;font-family:Inter,sans-serif;background:var(--white);outline:none;">
+            </div>
+            <p class="fg-hint">Huurders kunnen je dan direct via WhatsApp bereiken. Nummer zonder voorloopnul (bijv. 612345678 i.p.v. 0612345678).</p>
           </div>
         </div>
 
@@ -626,6 +629,14 @@ function sluitMobielMenu() {
   document.getElementById('hamburger-btn').classList.remove('open');
 }
 
+function normaliseerWaNummer(landcode, lokaalNummer) {
+  let nr = (lokaalNummer || '').replace(/\D/g, ''); // alleen cijfers
+  if (!nr) return '';
+  // Verwijder eventuele voorloopnul (bijv. 0612345678 → 612345678)
+  if (nr.startsWith('0')) nr = nr.slice(1);
+  return landcode + nr;
+}
+
 const EU_LANDEN = [
   'Nederland','België','Duitsland','Frankrijk','Spanje','Portugal','Italië',
   'Oostenrijk','Zwitserland','Griekenland','Kroatië','Slovenië','Tsjechië',
@@ -633,6 +644,46 @@ const EU_LANDEN = [
   'Ierland','Schotland','Engeland','Wales','Luxemburg','Malta','Cyprus',
   'Bulgarije','Roemenië','Albanië','Montenegro','Servië','Noord-Macedonië',
   'Bosnië-Herzegovina','Slowakije','Letland','Litouwen','Estland','Moldavië',
+];
+
+const LANDCODES = [
+  { land: 'Nederland', code: '31' },
+  { land: 'België', code: '32' },
+  { land: 'Duitsland', code: '49' },
+  { land: 'Frankrijk', code: '33' },
+  { land: 'Spanje', code: '34' },
+  { land: 'Portugal', code: '351' },
+  { land: 'Italië', code: '39' },
+  { land: 'Oostenrijk', code: '43' },
+  { land: 'Zwitserland', code: '41' },
+  { land: 'Griekenland', code: '30' },
+  { land: 'Kroatië', code: '385' },
+  { land: 'Slovenië', code: '386' },
+  { land: 'Tsjechië', code: '420' },
+  { land: 'Polen', code: '48' },
+  { land: 'Hongarije', code: '36' },
+  { land: 'Denemarken', code: '45' },
+  { land: 'Noorwegen', code: '47' },
+  { land: 'Zweden', code: '46' },
+  { land: 'Finland', code: '358' },
+  { land: 'IJsland', code: '354' },
+  { land: 'Ierland', code: '353' },
+  { land: 'Verenigd Koninkrijk', code: '44' },
+  { land: 'Luxemburg', code: '352' },
+  { land: 'Malta', code: '356' },
+  { land: 'Cyprus', code: '357' },
+  { land: 'Bulgarije', code: '359' },
+  { land: 'Roemenië', code: '40' },
+  { land: 'Albanië', code: '355' },
+  { land: 'Montenegro', code: '382' },
+  { land: 'Servië', code: '381' },
+  { land: 'Noord-Macedonië', code: '389' },
+  { land: 'Bosnië-Herzegovina', code: '387' },
+  { land: 'Slowakije', code: '421' },
+  { land: 'Letland', code: '371' },
+  { land: 'Litouwen', code: '370' },
+  { land: 'Estland', code: '372' },
+  { land: 'Moldavië', code: '373' },
 ];
 
 // ═══ DATA ═══
@@ -1168,7 +1219,7 @@ async function plaatsKansje(){
   const titel=document.getElementById('f-titel').value.trim();
   const locatie=document.getElementById('f-locatie').value.trim();
   const waEnabled=document.getElementById('f-wa-enabled').checked;
-  const waNr=waEnabled?document.getElementById('f-wa-nr').value.replace(/^0/,'31').replace(/\D/g,''):'';
+  const waNr=waEnabled?normaliseerWaNummer(document.getElementById('f-wa-land').value, document.getElementById('f-wa-nr').value):'';
 
   // Eerste foto als hoofd-foto
   const fotoUrl=(window._fotos&&window._fotos.length>0)?window._fotos[0].url:'';
@@ -1347,6 +1398,17 @@ function vulLandenDropdowns() {
       opt.value = land;
       opt.textContent = land;
       fLand.appendChild(opt);
+    });
+  }
+  // WhatsApp landnummer dropdown
+  const waLand = document.getElementById('f-wa-land');
+  if (waLand && waLand.options.length === 0) {
+    LANDCODES.forEach(({ land, code }) => {
+      const opt = document.createElement('option');
+      opt.value = code;
+      opt.textContent = `${land} (+${code})`;
+      if (land === 'Nederland') opt.selected = true;
+      waLand.appendChild(opt);
     });
   }
 }
