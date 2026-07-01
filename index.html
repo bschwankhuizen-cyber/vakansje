@@ -790,12 +790,7 @@ function maakSlug(titel, id) {
     .replace(/[üúù]/g, 'u').replace(/[öóò]/g, 'o')
     .replace(/[äáà]/g, 'a').replace(/ñ/g, 'n').replace(/ç/g, 'c')
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-  return slug + '-' + id.slice(0, 8);
-}
-function naarDetail(id) {
-  const k = alleKansjes().find(x => String(x.id||x._tid) === String(id));
-  const slug = k ? maakSlug(k.titel, String(k.id||k._tid)) : id;
-  window.location.href = '/kansje/' + slug;
+  return slug + '-' + String(id).slice(0, 8);
 }
 
 function openDetail(id){
