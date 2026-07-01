@@ -7,6 +7,15 @@ const supabase = createClient(
 
 const SITE_URL = process.env.SITE_URL || 'https://vakantiekansjes.nl';
 
+function maakSlug(titel, id) {
+  let slug = (titel || '').toLowerCase()
+    .replace(/[ëéèê]/g, 'e').replace(/[ïíì]/g, 'i')
+    .replace(/[üúù]/g, 'u').replace(/[öóò]/g, 'o')
+    .replace(/[äáà]/g, 'a').replace(/ñ/g, 'n').replace(/ç/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return `${slug}-${id.slice(0, 8)}`;
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end();
 
@@ -14,7 +23,7 @@ export default async function handler(req, res) {
     const nu = new Date().toISOString().split('T')[0];
     const { data } = await supabase
       .from('kansjes')
-      .select('id, aangemaakt_op')
+      .select('id, titel, aangemaakt_op')
       .eq('verified', true)
       .gte('tot', nu);
 
@@ -27,8 +36,8 @@ export default async function handler(req, res) {
     ];
 
     const kansjeUrls = (data || []).map(k => ({
-      url: `/kansje/${k.id}`,
-      lastmod: k.aangemaakt_op ? k.aangemaakt_op.split('T')[0] : new Date().toISOString().split('T')[0],
+      url: `/kansje/${maakSlug(k.titel, k.id)}`,
+      lastmod: k.aangemaakt_op ? k.aangemaakt_op.split('T')[0] : nu,
       priority: '0.8',
       changefreq: 'weekly',
     }));
@@ -49,6 +58,6 @@ ${alleUrls.map(({ url, lastmod, priority, changefreq }) => `  <url>
     res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
     return res.status(200).send(xml);
   } catch (err) {
-    return res.status(500).send('<?xml version="1.0"?><error>Fout bij genereren sitemap</error>');
+    return res.status(500).send('<?xml version="1.0"?><error>Fout</error>');
   }
 }
