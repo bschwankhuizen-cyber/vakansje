@@ -259,9 +259,10 @@ function bouwPagina(k) {
   detailFotos = (k.foto_urls && k.foto_urls.length > 0) ? k.foto_urls : (k.foto_url ? [k.foto_url] : []);
 
   // SEO meta tags
-  const paginaTitel = `${k.titel} — Last-minute vakantiewoning in ${k.locatie} | Vakantiekansjes.nl`;
+  const paginaTitel = `Last minute ${k.locatie} van ${fmtKort(k.van)} tot ${fmtNL(k.tot)} - ${k.titel}`;
   document.getElementById('page-title').textContent = paginaTitel;
-  document.getElementById('page-desc').content = `Last-minute ${k.type} in ${k.locatie} (${k.land}) beschikbaar van ${fmtKort(k.van)} t/m ${fmtKort(k.tot)}. Vanaf €${k.prijs} p/n. Direct contact met de verhuurder.`;
+  const omschrijvingKort = (k.omschrijving || '').replace(/\n/g, ' ').slice(0, 150).trim();
+  document.getElementById('page-desc').content = omschrijvingKort || `Last-minute ${k.type} in ${k.locatie} beschikbaar van ${fmtKort(k.van)} t/m ${fmtNL(k.tot)}.`;
   document.getElementById('og-title').content = k.titel;
   document.getElementById('og-desc').content = k.omschrijving ? k.omschrijving.slice(0, 160) : `${k.type} in ${k.locatie} — €${k.prijs} p/n`;
   if (detailFotos[0]) document.getElementById('og-image').content = detailFotos[0];
