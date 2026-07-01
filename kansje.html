@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">Kansje laden… — Vakantiekansjes.nl</title>
+<meta name="description" id="page-desc" content="Last-minute vakantiewoning van een particuliere verhuurder op Vakantiekansjes.nl.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Vakantiekansjes.nl">
+<meta property="og:title" id="og-title" content="Vakantiekansjes.nl">
+<meta property="og:description" id="og-desc" content="">
+<meta property="og:image" id="og-image" content="">
+<link rel="canonical" id="canonical" href="https://vakantiekansjes.nl/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,300&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json" id="schema-json"></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #26a3dc; --navy-light: #e6f4fb;
+  --coral: #e41e27; --coral-dark: #c01820; --coral-light: #fdeef0;
+  --sun: #F5A623; --sun-light: #FEF5E4;
+  --teal: #1D9E75; --teal-light: #E4F7F1;
+  --green: #25D366;
+  --sand: #FAF8FF; --sand2: #F0EDF8;
+  --gray-100: #EAE8F0; --gray-300: #C4C0D4; --gray-500: #7A768A; --gray-700: #3A3650;
+  --text: #1A1828; --white: #FFFFFF;
+  --radius: 14px; --shadow: 0 4px 24px rgba(38,163,220,0.10);
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Inter', sans-serif; background: var(--sand); color: var(--text); font-size: 16px; line-height: 1.6; }
+
+/* NAV */
+nav { background: #26a3dc; backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255,255,255,0.2); padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 62px; position: sticky; top: 0; z-index: 200; }
+.nav-home { display: flex; align-items: center; text-decoration: none; }
+.nav-back { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+.nav-back:hover { color: white; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; text-decoration: none; transition: transform 0.12s, background 0.12s; font-family: 'Inter', sans-serif; }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--coral); color: var(--white); }
+.btn-primary:hover { background: var(--coral-dark); }
+.btn-secondary { background: var(--navy); color: var(--white); }
+.btn-secondary:hover { background: #1a7aaa; }
+.btn-whatsapp { background: var(--green); color: var(--white); }
+.btn-whatsapp:hover { background: #1aae52; }
+
+/* HERO GALERIJ */
+.galerij-wrap { position: relative; background: #1a1828; max-height: 480px; overflow: hidden; }
+.galerij-hoofd { position: relative; width: 100%; height: 420px; cursor: pointer; }
+.galerij-hoofd img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.92; transition: opacity 0.2s; }
+.galerij-hoofd:hover img { opacity: 1; }
+.galerij-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.9); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; }
+.galerij-nav-prev { left: 14px; }
+.galerij-nav-next { right: 14px; }
+.galerij-teller { position: absolute; bottom: 12px; right: 14px; background: rgba(0,0,0,0.6); color: white; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+.galerij-thumbs { display: flex; gap: 6px; padding: 8px 14px; background: #1a1828; overflow-x: auto; }
+.galerij-thumb { flex-shrink: 0; width: 80px; height: 60px; border-radius: 6px; overflow: hidden; cursor: pointer; border: 2px solid transparent; opacity: 0.6; transition: all 0.15s; }
+.galerij-thumb.actief { border-color: var(--coral); opacity: 1; }
+.galerij-thumb:hover { opacity: 1; }
+.galerij-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* LIGHTBOX */
+.lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 500; align-items: center; justify-content: center; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: 6px; }
+.lightbox-close { position: absolute; top: 1rem; right: 1rem; background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 42px; height: 42px; color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.lightbox-nav { position: fixed; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 44px; height: 44px; color: white; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.lightbox-nav-prev { left: 1rem; }
+.lightbox-nav-next { right: 1rem; }
+
+/* CONTENT */
+.pagina { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; display: grid; grid-template-columns: 1fr 340px; gap: 2.5rem; align-items: start; }
+.hoofd-info h1 { font-family: 'Fraunces', serif; font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 700; color: var(--text); line-height: 1.2; margin-bottom: 0.5rem; }
+.locatie { font-size: 15px; color: var(--gray-500); margin-bottom: 1rem; }
+.badges { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.badge { font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+.badge-teal { background: var(--teal-light); color: #0F6E56; }
+.badge-navy { background: var(--navy-light); color: var(--navy); }
+.badge-sun { background: var(--sun-light); color: #7A4F00; }
+.meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
+.meta-item { background: var(--white); border: 1px solid var(--gray-100); border-radius: 10px; padding: 12px 16px; }
+.meta-item .label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray-500); margin-bottom: 3px; }
+.meta-item .value { font-size: 15px; font-weight: 600; color: var(--text); }
+.omschrijving { font-size: 15px; color: var(--gray-700); line-height: 1.7; margin-bottom: 1.5rem; }
+.beschikbaar-toelichting { background: var(--sun-light); border: 1px solid #F5D87A; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #7A5500; line-height: 1.5; margin-bottom: 1.5rem; }
+.beschikbaar-toelichting strong { color: #5A3D00; }
+
+/* ZIJBALK */
+.zijbalk { position: sticky; top: 80px; }
+.prijs-kaart { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius); padding: 1.5rem; box-shadow: var(--shadow); margin-bottom: 1rem; }
+.prijs-was { font-size: 14px; color: var(--gray-500); text-decoration: line-through; }
+.prijs-bedrag { font-size: 2rem; font-weight: 700; color: var(--coral); }
+.prijs-pn { font-size: 14px; color: var(--gray-500); }
+.prijs-korting { display: inline-block; background: var(--coral); color: white; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
+.contact-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 1.25rem; }
+.contact-btns .btn { justify-content: center; padding: 13px; font-size: 15px; }
+.contact-form-wrap { margin-top: 1rem; display: none; }
+.contact-form-wrap.open { display: block; }
+.fg { margin-bottom: 0.9rem; }
+.fg label { display: block; font-size: 12px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+.fg input, .fg textarea { width: 100%; padding: 9px 12px; border: 1.5px solid var(--gray-100); border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; background: var(--sand); color: var(--text); outline: none; }
+.fg input:focus, .fg textarea:focus { border-color: var(--navy); background: var(--white); }
+.fg textarea { resize: vertical; min-height: 80px; }
+.form-error { background: #FEF2F2; border: 1px solid #FCA5A5; border-radius: 8px; padding: 10px 13px; font-size: 13px; color: #B91C1C; margin-bottom: 0.75rem; display: none; }
+.form-success { background: var(--teal-light); border: 1px solid var(--teal); border-radius: 8px; padding: 10px 13px; font-size: 13px; color: #0F6E56; margin-bottom: 0.75rem; display: none; }
+.spinner { width: 14px; height: 14px; border: 2px solid var(--coral-light); border-top-color: var(--coral); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* LAAD SCHERM */
+.laadscherm { text-align: center; padding: 5rem 2rem; color: var(--gray-500); }
+.laadscherm .spinner { width: 36px; height: 36px; border-width: 3px; margin: 0 auto 1rem; display: block; }
+.foutscherm { text-align: center; padding: 5rem 2rem; }
+.foutscherm h2 { font-family: 'Fraunces', serif; color: var(--navy); margin-bottom: 0.5rem; }
+
+footer { background: #26a3dc; color: rgba(255,255,255,0.5); text-align: center; font-size: 13px; padding: 2.5rem 2rem; }
+footer a { color: rgba(255,255,255,0.75); text-decoration: none; }
+footer a:hover { color: white; }
+
+@media (max-width: 720px) {
+  .pagina { grid-template-columns: 1fr; }
+  .zijbalk { position: static; }
+  .galerij-hoofd { height: 260px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-home">
+    <img src="https://necgpqhqtnmcxxlptchu.supabase.co/storage/v1/object/public/design/logo-vakantiekansjes.png" height="34" alt="Vakantiekansjes.nl">
+  </a>
+  <a href="/" class="nav-back">← Alle kansjes</a>
+</nav>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="sluitLightbox(event)">
+  <button class="lightbox-close" onclick="document.getElementById('lightbox').classList.remove('open')">✕</button>
+  <button class="lightbox-nav lightbox-nav-prev" onclick="lightboxNav(-1)">‹</button>
+  <img id="lightbox-img" src="" alt="">
+  <button class="lightbox-nav lightbox-nav-next" onclick="lightboxNav(1)">›</button>
+</div>
+
+<div id="inhoud">
+  <div class="laadscherm">
+    <div class="spinner"></div>
+    <p>Kansje laden…</p>
+  </div>
+</div>
+
+<footer>
+  <p style="margin-bottom:8px;">
+    <a href="/over-ons.html">Over ons</a> ·
+    <a href="/spelregels.html">Spelregels</a> ·
+    <a href="/privacybeleid.html">Privacybeleid</a> ·
+    <a href="/contact.html">Contact</a>
+  </p>
+  <p>© 2025 Vakantiekansjes.nl — Voor en door particulieren</p>
+</footer>
+
+<script>
+const MAANDEN = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+function fmtNL(s) {
+  if (!s) return '';
+  const d = new Date(s);
+  return `${d.getDate()} ${MAANDEN[d.getMonth()]} ${d.getFullYear()}`;
+}
+function fmtKort(s) {
+  if (!s) return '';
+  const d = new Date(s);
+  return `${d.getDate()} ${MAANDEN[d.getMonth()]}`;
+}
+
+let detailFotos = [];
+let fotoIdx = 0;
+
+function galerijToon(idx) {
+  fotoIdx = (idx + detailFotos.length) % detailFotos.length;
+  document.getElementById('galerij-hoofd-img').src = detailFotos[fotoIdx];
+  document.getElementById('galerij-teller').textContent = `${fotoIdx + 1} / ${detailFotos.length}`;
+  document.querySelectorAll('.galerij-thumb').forEach((t, i) => t.classList.toggle('actief', i === fotoIdx));
+}
+
+function openLightbox(idx) {
+  fotoIdx = idx;
+  document.getElementById('lightbox-img').src = detailFotos[idx];
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function lightboxNav(dir) {
+  fotoIdx = (fotoIdx + dir + detailFotos.length) % detailFotos.length;
+  document.getElementById('lightbox-img').src = detailFotos[fotoIdx];
+}
+function sluitLightbox(e) {
+  if (e.target === document.getElementById('lightbox') || e.target === document.getElementById('lightbox-img')) {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  if (lb.classList.contains('open')) {
+    if (e.key === 'ArrowLeft') lightboxNav(-1);
+    if (e.key === 'ArrowRight') lightboxNav(1);
+    if (e.key === 'Escape') { lb.classList.remove('open'); document.body.style.overflow = ''; }
+  }
+});
+
+function toggleContactForm() {
+  const wrap = document.getElementById('contact-form-wrap');
+  const btn = document.getElementById('btn-bericht');
+  const open = wrap.classList.toggle('open');
+  btn.textContent = open ? '✕ Verberg formulier' : '✉️ Stuur een bericht';
+}
+
+let berichtBezig = false;
+async function verstuurBericht() {
+  if (berichtBezig) return;
+  const id = window._kansjeId;
+  const naam = document.getElementById('cf-naam').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const bericht = document.getElementById('cf-bericht').value.trim();
+  const errEl = document.getElementById('cf-error');
+  const sucEl = document.getElementById('cf-success');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+
+  if (!naam) { errEl.textContent = 'Vul je naam in.'; errEl.style.display = 'block'; return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errEl.textContent = 'Vul een geldig e-mailadres in.'; errEl.style.display = 'block'; return; }
+  if (!bericht) { errEl.textContent = 'Schrijf een berichtje.'; errEl.style.display = 'block'; return; }
+
+  berichtBezig = true;
+  const btn = document.getElementById('cf-verzend-btn');
+  btn.innerHTML = '<span class="spinner"></span> Versturen…'; btn.disabled = true;
+
+  try {
+    const resp = await fetch('/api/bericht', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kansjeId: id, huurderNaam: naam, huurderEmail: email, bericht })
+    });
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error);
+    sucEl.textContent = `✓ Bericht verstuurd! De verhuurder reageert zo snel mogelijk op ${email}.`;
+    sucEl.style.display = 'block';
+    document.getElementById('cf-bericht').value = '';
+    btn.textContent = '✓ Verstuurd!';
+  } catch(e) {
+    errEl.textContent = 'Er ging iets mis. Probeer het opnieuw.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Verstuur →'; btn.disabled = false;
+  } finally {
+    berichtBezig = false;
+  }
+}
+
+function bouwPagina(k) {
+  window._kansjeId = k.id;
+  detailFotos = (k.foto_urls && k.foto_urls.length > 0) ? k.foto_urls : (k.foto_url ? [k.foto_url] : []);
+
+  // SEO meta tags
+  const paginaTitel = `${k.titel} — Last-minute vakantiewoning in ${k.locatie} | Vakantiekansjes.nl`;
+  document.getElementById('page-title').textContent = paginaTitel;
+  document.getElementById('page-desc').content = `Last-minute ${k.type} in ${k.locatie} (${k.land}) beschikbaar van ${fmtKort(k.van)} t/m ${fmtKort(k.tot)}. Vanaf €${k.prijs} p/n. Direct contact met de verhuurder.`;
+  document.getElementById('og-title').content = k.titel;
+  document.getElementById('og-desc').content = k.omschrijving ? k.omschrijving.slice(0, 160) : `${k.type} in ${k.locatie} — €${k.prijs} p/n`;
+  if (detailFotos[0]) document.getElementById('og-image').content = detailFotos[0];
+  document.getElementById('canonical').href = `https://vakantiekansjes.nl/kansje/${k.id}`;
+
+  // Schema.org structured data
+  document.getElementById('schema-json').textContent = JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "LodgingBusiness",
+    "name": k.titel,
+    "description": k.omschrijving || `${k.type} in ${k.locatie}`,
+    "address": { "@type": "PostalAddress", "addressLocality": k.locatie, "addressCountry": k.land },
+    "priceRange": `€${k.prijs}`,
+    "image": detailFotos,
+    "url": `https://vakantiekansjes.nl/kansje/${k.id}`,
+  });
+
+  // Korting
+  const kortingPct = k.oude_prijs && k.prijs ? Math.round((1 - k.prijs / k.oude_prijs) * 100) : 0;
+
+  // Galerij HTML
+  const galerij = detailFotos.length > 0 ? `
+    <div class="galerij-wrap">
+      <div class="galerij-hoofd" onclick="openLightbox(${fotoIdx})">
+        <img id="galerij-hoofd-img" src="${detailFotos[0]}" alt="${k.titel}">
+        ${detailFotos.length > 1 ? `
+          <button class="galerij-nav galerij-nav-prev" onclick="event.stopPropagation();galerijToon(fotoIdx-1)">‹</button>
+          <button class="galerij-nav galerij-nav-next" onclick="event.stopPropagation();galerijToon(fotoIdx+1)">›</button>
+          <span class="galerij-teller">1 / ${detailFotos.length}</span>
+        ` : ''}
+      </div>
+      ${detailFotos.length > 1 ? `
+        <div class="galerij-thumbs">
+          ${detailFotos.map((url, i) => `<div class="galerij-thumb ${i===0?'actief':''}" onclick="galerijToon(${i})"><img src="${url}" alt="Foto ${i+1}"></div>`).join('')}
+        </div>
+      ` : ''}
+    </div>
+  ` : `<div style="height:200px;background:var(--gray-100);display:flex;align-items:center;justify-content:center;color:var(--gray-500);">Geen foto beschikbaar</div>`;
+
+  // WhatsApp knop
+  const waBtn = k.wa ? `
+    <a class="btn btn-whatsapp" href="https://wa.me/${k.wa}?text=${encodeURIComponent(`Hoi! Ik zag het kansje "${k.titel}" op Vakantiekansjes.nl en heb interesse. Kunnen we even contact?`)}" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </a>` : '';
+
+  document.getElementById('inhoud').innerHTML = `
+    ${galerij}
+    <div class="pagina">
+      <div class="hoofd-info">
+        <h1>${k.titel}</h1>
+        <p class="locatie">📍 ${k.locatie}, ${k.land}</p>
+        <div class="badges">
+          <span class="badge badge-navy">${k.type}</span>
+          ${k.urgency ? `<span class="badge badge-sun">${k.urgency}</span>` : ''}
+        </div>
+        <div class="beschikbaar-toelichting">
+          📅 <strong>Beschikbaar van ${fmtKort(k.van)} t/m ${fmtNL(k.tot)}</strong> — je hoeft niet de volledige periode te boeken. Kies zelf je aankomst- en vertrekdatum binnen dit venster, minimaal ${k.min_nachten || 1} nacht${(k.min_nachten || 1) !== 1 ? 'en' : ''}.
+        </div>
+        <div class="meta-grid">
+          <div class="meta-item"><div class="label">Beschikbaar vanaf</div><div class="value">${fmtKort(k.van)}</div></div>
+          <div class="meta-item"><div class="label">Beschikbaar t/m</div><div class="value">${fmtKort(k.tot)}</div></div>
+          <div class="meta-item"><div class="label">Max. personen</div><div class="value">${k.personen} personen</div></div>
+          <div class="meta-item"><div class="label">Minimaal</div><div class="value">${k.min_nachten || 1} nacht${(k.min_nachten || 1) !== 1 ? 'en' : ''}</div></div>
+        </div>
+        ${k.omschrijving ? `<div class="omschrijving">${k.omschrijving.replace(/\n/g, '<br>')}</div>` : ''}
+        <p style="font-size:13px;color:var(--gray-500);">Dit kansje wordt aangeboden door een particuliere verhuurder. Vakantiekansjes.nl is niet betrokken bij de boeking.</p>
+      </div>
+
+      <div class="zijbalk">
+        <div class="prijs-kaart">
+          ${k.oude_prijs ? `<div class="prijs-was">€${k.oude_prijs} p/n</div>` : ''}
+          <div>
+            <span class="prijs-bedrag">€${k.prijs}</span>
+            <span class="prijs-pn"> / nacht</span>
+            ${kortingPct > 0 ? `<span class="prijs-korting">-${kortingPct}%</span>` : ''}
+          </div>
+          <div class="contact-btns">
+            <button class="btn btn-secondary" id="btn-bericht" onclick="toggleContactForm()">✉️ Stuur een bericht</button>
+            ${waBtn}
+            ${k.contact && !k.wa ? `<div style="font-size:13px;color:var(--gray-500);padding:4px 0;">📞 ${k.contact}</div>` : ''}
+          </div>
+          <div class="contact-form-wrap" id="contact-form-wrap">
+            <div class="form-error" id="cf-error"></div>
+            <div class="form-success" id="cf-success"></div>
+            <div class="fg"><label>Naam *</label><input type="text" id="cf-naam" placeholder="Jan de Vries"></div>
+            <div class="fg"><label>E-mail *</label><input type="email" id="cf-email" placeholder="jij@voorbeeld.nl"></div>
+            <div class="fg"><label>Bericht *</label><textarea id="cf-bericht" placeholder="Ik heb interesse in dit kansje. Is het nog beschikbaar?"></textarea></div>
+            <button class="btn btn-secondary" id="cf-verzend-btn" onclick="verstuurBericht()" style="width:100%;justify-content:center;padding:11px;">Verstuur →</button>
+          </div>
+        </div>
+        <a href="/" style="display:block;text-align:center;font-size:13px;color:var(--gray-500);text-decoration:none;">← Meer kansjes bekijken</a>
+      </div>
+    </div>`;
+}
+
+// Laad het kansje op basis van UUID in de URL
+async function laadKansje() {
+  const pad = window.location.pathname; // /kansje/uuid
+  const id = pad.split('/').pop();
+
+  if (!id || id === 'kansje') {
+    document.getElementById('inhoud').innerHTML = `<div class="foutscherm"><h2>Kansje niet gevonden</h2><p><a href="/">← Terug naar alle kansjes</a></p></div>`;
+    return;
+  }
+
+  try {
+    const resp = await fetch(`/api/kansje-detail?id=${encodeURIComponent(id)}`);
+    if (!resp.ok) throw new Error('Niet gevonden');
+    const data = await resp.json();
+    bouwPagina(data.kansje);
+  } catch(e) {
+    document.getElementById('inhoud').innerHTML = `
+      <div class="foutscherm">
+        <h2>Dit kansje is niet meer beschikbaar</h2>
+        <p style="color:var(--gray-500);margin:0.5rem 0 1.5rem;">Het kansje is verlopen, verwijderd of bestaat niet.</p>
+        <a href="/" class="btn btn-primary">← Bekijk alle kansjes</a>
+      </div>`;
+  }
+}
+
+laadKansje();
+</script>
+
+</body>
+</html>

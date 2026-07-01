@@ -757,7 +757,7 @@ function renderGrid(lijst){
     return;
   }
   grid.innerHTML=lijst.map(k=>`
-    <article class="kaartje" onclick="openDetail('${k.id||k._tid}')">
+    <article class="kaartje" onclick="naarDetail('${k.id||k._tid}')">
       <div class="kaartje-foto">
         <img src="${k.foto_url||k.foto||UNSPLASH[Math.abs(Array.from(String(k.id||k._tid)).reduce((a,c)=>a+c.charCodeAt(0),0))%UNSPLASH.length]}" alt="${k.titel}" loading="lazy">
         <span class="kaartje-urgency">${k.urgency}</span>
@@ -784,6 +784,8 @@ function renderGrid(lijst){
 function toggleFav(btn){btn.textContent=btn.textContent==='🤍'?'❤️':'🤍';}
 
 // ═══ DETAIL ═══
+function naarDetail(id) { window.location.href = '/kansje/' + id; }
+
 function openDetail(id){
   const k=alleKansjes().find(x=>String(x.id||x._tid)===String(id));
   if(!k)return;
