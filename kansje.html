@@ -378,15 +378,21 @@ async function laadKansje() {
 
   try {
     const resp = await fetch(`/api/kansje-detail?slug=${encodeURIComponent(slug)}`);
-    if (!resp.ok) throw new Error('Niet gevonden');
     const data = await resp.json();
+    if (!resp.ok) {
+      console.error('API fout:', resp.status, data);
+      throw new Error(data.error || 'Niet gevonden');
+    }
+    if (!data.kansje) throw new Error('Geen kansje in response');
     bouwPagina(data.kansje);
   } catch(e) {
+    console.error('laadKansje fout:', e.message);
     document.getElementById('inhoud').innerHTML = `
       <div class="foutscherm">
         <h2>Dit kansje is niet meer beschikbaar</h2>
         <p style="color:var(--gray-500);margin:0.5rem 0 1.5rem;">Het kansje is verlopen, verwijderd of bestaat niet.</p>
-        <a href="/" class="btn btn-primary">← Bekijk alle kansjes</a>
+        <p style="font-size:12px;color:#ccc;margin-top:1rem;">${e.message}</p>
+        <a href="/" class="btn btn-primary" style="margin-top:1rem;">← Bekijk alle kansjes</a>
       </div>`;
   }
 }
