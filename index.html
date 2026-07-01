@@ -757,7 +757,7 @@ function renderGrid(lijst){
     return;
   }
   grid.innerHTML=lijst.map(k=>`
-    <article class="kaartje" onclick="naarDetail('${k.id||k._tid}')">
+    <article class="kaartje" onclick="openDetail('${k.id||k._tid}')">
       <div class="kaartje-foto">
         <img src="${k.foto_url||k.foto||UNSPLASH[Math.abs(Array.from(String(k.id||k._tid)).reduce((a,c)=>a+c.charCodeAt(0),0))%UNSPLASH.length]}" alt="${k.titel}" loading="lazy">
         <span class="kaartje-urgency">${k.urgency}</span>
@@ -784,7 +784,19 @@ function renderGrid(lijst){
 function toggleFav(btn){btn.textContent=btn.textContent==='🤍'?'❤️':'🤍';}
 
 // ═══ DETAIL ═══
-function naarDetail(id) { window.location.href = '/kansje/' + id; }
+function maakSlug(titel, id) {
+  let slug = (titel || '').toLowerCase()
+    .replace(/[ëéèê]/g, 'e').replace(/[ïíì]/g, 'i')
+    .replace(/[üúù]/g, 'u').replace(/[öóò]/g, 'o')
+    .replace(/[äáà]/g, 'a').replace(/ñ/g, 'n').replace(/ç/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return slug + '-' + id.slice(0, 8);
+}
+function naarDetail(id) {
+  const k = alleKansjes().find(x => String(x.id||x._tid) === String(id));
+  const slug = k ? maakSlug(k.titel, String(k.id||k._tid)) : id;
+  window.location.href = '/kansje/' + slug;
+}
 
 function openDetail(id){
   const k=alleKansjes().find(x=>String(x.id||x._tid)===String(id));

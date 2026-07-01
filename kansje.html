@@ -358,18 +358,26 @@ function bouwPagina(k) {
     </div>`;
 }
 
-// Laad het kansje op basis van UUID in de URL
-async function laadKansje() {
-  const pad = window.location.pathname; // /kansje/uuid
-  const id = pad.split('/').pop();
+function maakSlug(titel, id) {
+  let slug = (titel || '').toLowerCase()
+    .replace(/[ëéèê]/g, 'e').replace(/[ïíì]/g, 'i')
+    .replace(/[üúù]/g, 'u').replace(/[öóò]/g, 'o')
+    .replace(/[äáà]/g, 'a').replace(/ñ/g, 'n').replace(/ç/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return `${slug}-${id.slice(0, 8)}`;
+}
 
-  if (!id || id === 'kansje') {
+async function laadKansje() {
+  const pad = window.location.pathname;
+  const slug = pad.split('/').filter(Boolean).pop();
+
+  if (!slug || slug === 'kansje') {
     document.getElementById('inhoud').innerHTML = `<div class="foutscherm"><h2>Kansje niet gevonden</h2><p><a href="/">← Terug naar alle kansjes</a></p></div>`;
     return;
   }
 
   try {
-    const resp = await fetch(`/api/kansje-detail?id=${encodeURIComponent(id)}`);
+    const resp = await fetch(`/api/kansje-detail?slug=${encodeURIComponent(slug)}`);
     if (!resp.ok) throw new Error('Niet gevonden');
     const data = await resp.json();
     bouwPagina(data.kansje);
