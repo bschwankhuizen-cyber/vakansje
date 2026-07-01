@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/kansje/:id", "destination": "/kansje.html" },
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
+  ]
+}
