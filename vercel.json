@@ -1,12 +1,6 @@
 {
   "rewrites": [
-    { "source": "/kansje/:path*", "destination": "/kansje.html" },
+    { "source": "/kansje/:path*", "destination": "/api/kansje-page" },
     { "source": "/sitemap.xml", "destination": "/api/sitemap" }
-  ],
-  "headers": [
-    {
-      "source": "/api/sitemap",
-      "headers": [{ "key": "Content-Type", "value": "application/xml" }]
-    }
   ]
 }
